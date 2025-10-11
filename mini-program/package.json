@@ -1,0 +1,20 @@
+{
+  "name": "plant-pest-mini-program",
+  "version": "1.0.0",
+  "description": "植物病虫害识别微信小程序",
+  "main": "main.js",
+  "scripts": {
+    "dev": "npm run dev:mp-weixin",
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "build": "npm run build:mp-weixin",
+    "build:mp-weixin": "uni build -p mp-weixin"
+  },
+  "dependencies": {
+    "vue": "^3.2.0"
+  },
+  "devDependencies": {
+    "@dcloudio/uni-cli-shared": "latest",
+    "@dcloudio/uni-app": "latest",
+    "@dcloudio/uni-mp-weixin": "latest"
+  }
+}
