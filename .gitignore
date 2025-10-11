@@ -1,0 +1,58 @@
+# 编译输出
+target/
+dist/
+build/
+*.class
+
+# 日志文件
+*.log
+logs/
+
+# 依赖目录
+node_modules/
+bower_components/
+
+# IDE配置
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Maven
+.mvn/
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 上传文件
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+
+# 环境配置
+.env
+.env.local
+.env.*.local
+
+# 打包文件
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# 微信小程序
+unpackage/
+.hbuilderx/
