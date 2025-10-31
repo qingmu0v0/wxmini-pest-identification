@@ -1,6 +1,7 @@
 package com.plantpest.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -13,15 +14,14 @@ import java.util.List;
 /**
  * 跨域配置
  */
+@Data
 @Configuration
+@ConfigurationProperties(prefix = "cors")
 public class CorsConfig {
-    
-    @Value("${cors.allowed-origins}")
+
     private List<String> allowedOrigins;
-    
-    @Value("${cors.allowed-methods}")
     private List<String> allowedMethods;
-    
+
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
@@ -30,7 +30,7 @@ public class CorsConfig {
         config.setAllowedMethods(allowedMethods);
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);

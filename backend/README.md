@@ -29,10 +29,68 @@ spring:
 
 ai:
   qwen3:
-    api-key: your-qwen-api-key
+    api-key: sk-your-dashscope-api-key  # 从阿里云DashScope控制台获取
 ```
 
-### 4. 启动服务
+### 4. 配置AI服务
+
+#### 获取API密钥
+1. 访问 [阿里云DashScope控制台](https://dashscope.aliyun.com/)
+2. 登录后进入API-KEY管理页面
+3. 创建新的API密钥，复制密钥内容
+
+#### 设置API密钥（三种方式）
+
+**方式一：环境变量（推荐）**
+```bash
+# Linux/macOS
+export DASHSCOPE_API_KEY=sk-your-api-key-here
+mvn spring-boot:run
+
+# Windows
+set DASHSCOPE_API_KEY=sk-your-api-key-here
+mvn spring-boot:run
+```
+
+**方式二：系统属性**
+```bash
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DDASHSCOPE_API_KEY=sk-your-api-key-here"
+```
+
+**方式三：直接在配置文件中设置**
+编辑 `application.yml`：
+```yaml
+ai:
+  qwen3:
+    api-key: sk-your-api-key-here
+```
+
+**注意**：DashScope SDK优先读取`DASHSCOPE_API_KEY`环境变量，如果找不到才会读取配置文件中的`api-key`。
+
+### 5. 启动服务
+
+**方式一：使用启动脚本（推荐）**
+
+1. 设置环境变量：
+   ```bash
+   # Linux/macOS
+   export DASHSCOPE_API_KEY=sk-your-api-key-here
+   
+   # Windows
+   set DASHSCOPE_API_KEY=sk-your-api-key-here
+   ```
+
+2. 运行启动脚本：
+   ```bash
+   # Linux/macOS
+   chmod +x start.sh
+   ./start.sh
+   
+   # Windows
+   start.bat
+   ```
+
+**方式二：手动启动**
 
 ```bash
 # 编译

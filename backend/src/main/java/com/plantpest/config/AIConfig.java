@@ -4,9 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * AI模型配置
  */
@@ -16,9 +13,9 @@ import java.util.Map;
 public class AIConfig {
     
     private String defaultModel;
-    private Map<String, ModelConfig> qwen3 = new HashMap<>();
-    private Map<String, ModelConfig> gpt4 = new HashMap<>();
-    private Map<String, ModelConfig> claude = new HashMap<>();
+    private ModelConfig qwen3 = new ModelConfig();
+    private ModelConfig gpt4 = new ModelConfig();
+    private ModelConfig claude = new ModelConfig();
     
     @Data
     public static class ModelConfig {
@@ -28,7 +25,7 @@ public class AIConfig {
         private String model;
     }
     
-    public Map<String, ModelConfig> getModelConfig(String modelType) {
+    public ModelConfig getModelConfig(String modelType) {
         return switch (modelType.toLowerCase()) {
             case "qwen3" -> qwen3;
             case "gpt4" -> gpt4;
