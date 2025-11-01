@@ -37,9 +37,8 @@
           </div>
         </div>
         <div class="hero-image">
-          <div class="image-placeholder">
-            <span class="placeholder-icon">🌿</span>
-            <p class="placeholder-text">智能识别 · 精准分析</p>
+          <div class="image-container">
+            <div class="hero-bug-emoji">🦗</div>
           </div>
         </div>
       </div>
@@ -164,7 +163,7 @@
           <div class="footer-section">
             <h4 class="footer-heading">联系我们</h4>
             <ul class="footer-links">
-              <li>📧 Email: support@plantpest.com</li>
+              <li>📧 Email: qingmu0v0@outlook.com</li>
               <li>📱 微信小程序: 植物病虫害识别</li>
             </ul>
           </div>
@@ -179,7 +178,7 @@
 </template>
 
 <script setup>
-import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
+import { CameraFilled, InfoFilled, ZoomIn } from '@element-plus/icons-vue'
 </script>
 
 <style scoped>
@@ -244,7 +243,7 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
 
 /* 英雄区 */
 .hero {
-  padding: 80px 20px;
+  padding: 200px 20px;
 }
 
 .hero .container {
@@ -266,6 +265,7 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
   font-size: 48px;
   line-height: 1.3;
   color: var(--text-primary);
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .gradient-text {
@@ -279,11 +279,13 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
   font-size: 20px;
   color: var(--text-secondary);
   line-height: 1.6;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .hero-buttons {
   display: flex;
   gap: 20px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 .btn {
@@ -333,28 +335,119 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
   align-items: center;
 }
 
-.image-placeholder {
-  width: 100%;
-  max-width: 500px;
-  aspect-ratio: 1;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-  border-radius: 30px;
+.image-container {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  justify-content: center;
 }
 
-.placeholder-icon {
-  font-size: 120px;
-  margin-bottom: 20px;
+.hero-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s ease;
 }
 
-.placeholder-text {
+/* Hero bug emoji styles */
+.hero-bug-emoji {
+  font-size: 210px;
+  line-height: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 280px;
+  height: 280px;
+  background: transparent;
+  animation: bugFloat 4s ease-in-out infinite;
+}
+
+@keyframes bugFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.image-container:hover .hero-img {
+  transform: scale(1.05);
+}
+
+.img-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(46, 125, 50, 0.9), rgba(46, 125, 50, 0.7), transparent);
+  padding: 30px 20px 20px;
+  color: white;
+  transform: translateY(100%);
+  transition: transform 0.4s ease;
+}
+
+.image-container:hover .img-overlay {
+  transform: translateY(0);
+}
+
+.overlay-content {
+  text-align: center;
+}
+
+.analysis-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+  animation: pulse 2s infinite;
+}
+
+.overlay-title {
   font-size: 24px;
   font-weight: bold;
-  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.overlay-desc {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* 功能特点 */
@@ -395,6 +488,24 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
   text-align: center;
   transition: all 0.3s;
   border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.feature-card:hover::before {
+  transform: translateX(0);
 }
 
 .feature-card:hover {
@@ -406,6 +517,11 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
 .feature-icon {
   font-size: 60px;
   margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .feature-title {
@@ -448,6 +564,12 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
   text-align: center;
   position: relative;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
 .step-number {
@@ -465,11 +587,22 @@ import { CameraFilled, InfoFilled } from '@element-plus/icons-vue'
   justify-content: center;
   font-size: 20px;
   font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.step:hover .step-number {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
 }
 
 .step-icon {
   font-size: 60px;
   margin: 20px 0;
+  transition: transform 0.3s ease;
+}
+
+.step:hover .step-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .step-title {

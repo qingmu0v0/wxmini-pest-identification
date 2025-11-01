@@ -13,7 +13,7 @@ export default defineConfig({
     port: 8081,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://qingmu.cloud',
         changeOrigin: true
       }
     }

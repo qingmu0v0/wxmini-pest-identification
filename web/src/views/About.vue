@@ -113,7 +113,7 @@
             <div class="contact-item">
               <el-icon class="contact-icon" color="#4CAF50"><Message /></el-icon>
               <h3>电子邮件</h3>
-              <p>support@plantpest.com</p>
+              <p>qingmu0v0@outlook.com</p>
             </div>
             
             <div class="contact-item">
@@ -259,6 +259,7 @@ const features = [
   font-size: 40px;
   color: var(--text-primary);
   margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .intro-card,
@@ -266,6 +267,34 @@ const features = [
 .features-card,
 .contact-card {
   margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.intro-card {
+  animation-delay: 0.2s;
+}
+
+.tech-card {
+  animation-delay: 0.4s;
+}
+
+.features-card {
+  animation-delay: 0.6s;
+}
+
+.contact-card {
+  animation-delay: 0.8s;
+}
+
+.intro-card:hover,
+.tech-card:hover,
+.features-card:hover,
+.contact-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .card-title {
@@ -295,6 +324,11 @@ const features = [
 .tech-icon {
   font-size: 50px;
   margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.tech-item:hover .tech-icon {
+  transform: scale(1.2) rotate(10deg);
 }
 
 .tech-item h3 {
@@ -333,6 +367,12 @@ const features = [
 .contact-icon {
   font-size: 50px;
   margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover .contact-icon {
+  transform: scale(1.2);
+  color: var(--primary-color) !important;
 }
 
 .contact-item h3 {
@@ -358,6 +398,65 @@ const features = [
 .footer .container {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* 时间线动画 */
+:deep(.el-timeline-item) {
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+:deep(.el-timeline-item:nth-child(1)) {
+  animation-delay: 0.2s;
+}
+
+:deep(.el-timeline-item:nth-child(2)) {
+  animation-delay: 0.4s;
+}
+
+:deep(.el-timeline-item:nth-child(3)) {
+  animation-delay: 0.6s;
+}
+
+:deep(.el-timeline-item:nth-child(4)) {
+  animation-delay: 0.8s;
+}
+
+:deep(.el-timeline-item:nth-child(5)) {
+  animation-delay: 1s;
+}
+
+:deep(.el-timeline-item:nth-child(6)) {
+  animation-delay: 1.2s;
+}
+
+:deep(.el-timeline-item:hover) {
+  transform: translateX(5px);
+  transition: all 0.3s ease;
+}
+
+/* 动画关键帧 */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* 响应式设计 */

@@ -1,6 +1,6 @@
 {
     "name" : "植物病虫害识别",
-    "appid" : "uni-app",
+    "appid" : "__UNI__8F0F716",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -50,7 +50,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "testappid",
+        "appid" : "__UNI__8F0F716",
         "setting" : {
             "urlCheck" : false
         },
@@ -65,8 +65,8 @@
     "mp-toutiao" : {
         "usingComponents" : true
     },
-    "uniStatistics": {  
-        "enable": false
+    "uniStatistics" : {
+        "enable" : false
     },
     "vueVersion" : "3"
 }

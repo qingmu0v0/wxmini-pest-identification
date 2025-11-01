@@ -1,0 +1,60 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="150" cy="150" r="140" fill="#f0f8f0" stroke="#4CAF50" stroke-width="2"/>
+  
+  <!-- Locust body -->
+  <ellipse cx="150" cy="150" rx="80" ry="25" fill="#8BC34A" stroke="#689F38" stroke-width="2"/>
+  
+  <!-- Locust head -->
+  <circle cx="220" cy="150" r="20" fill="#7CB342" stroke="#558B2F" stroke-width="2"/>
+  
+  <!-- Antennae -->
+  <path d="M210 140 Q200 125 190 120" stroke="#689F38" stroke-width="3" stroke-linecap="round"/>
+  <path d="M210 160 Q200 175 190 180" stroke="#689F38" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="190" cy="120" r="3" fill="#689F38"/>
+  <circle cx="190" cy="180" r="3" fill="#689F38"/>
+  
+  <!-- Eyes -->
+  <circle cx="215" cy="145" r="4" fill="#2E7D32"/>
+  <circle cx="215" cy="155" r="4" fill="#2E7D32"/>
+  
+  <!-- Wings -->
+  <ellipse cx="130" cy="130" rx="35" ry="20" fill="#AED581" stroke="#7CB342" stroke-width="2" opacity="0.8"/>
+  <ellipse cx="130" cy="170" rx="35" ry="20" fill="#AED581" stroke="#7CB342" stroke-width="2" opacity="0.8"/>
+  
+  <!-- Wing details -->
+  <path d="M110 125 Q130 130 150 125" stroke="#8BC34A" stroke-width="1" fill="none"/>
+  <path d="M110 135 Q130 140 150 135" stroke="#8BC34A" stroke-width="1" fill="none"/>
+  <path d="M110 165 Q130 170 150 165" stroke="#8BC34A" stroke-width="1" fill="none"/>
+  <path d="M110 175 Q130 180 150 175" stroke="#8BC34A" stroke-width="1" fill="none"/>
+  
+  <!-- Legs -->
+  <!-- Front legs -->
+  <path d="M180 130 L170 110 L165 90" stroke="#689F38" stroke-width="4" stroke-linecap="round"/>
+  <path d="M180 170 L170 190 L165 210" stroke="#689F38" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Middle legs -->
+  <path d="M150 130 L140 115 L135 95" stroke="#689F38" stroke-width="4" stroke-linecap="round"/>
+  <path d="M150 170 L140 185 L135 205" stroke="#689F38" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Back legs -->
+  <path d="M120 130 L100 120 L80 110" stroke="#689F38" stroke-width="5" stroke-linecap="round"/>
+  <path d="M120 170 L100 180 L80 190" stroke="#689F38" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- Leg joints -->
+  <circle cx="170" cy="110" r="3" fill="#558B2F"/>
+  <circle cx="170" cy="190" r="3" fill="#558B2F"/>
+  <circle cx="140" cy="115" r="3" fill="#558B2F"/>
+  <circle cx="140" cy="185" r="3" fill="#558B2F"/>
+  <circle cx="100" cy="120" r="4" fill="#558B2F"/>
+  <circle cx="100" cy="180" r="4" fill="#558B2F"/>
+  
+  <!-- Warning symbol -->
+  <circle cx="60" cy="60" r="25" fill="#FF9800" stroke="#F57C00" stroke-width="3"/>
+  <text x="60" y="70" text-anchor="middle" fill="white" font-size="30" font-weight="bold">!</text>
+  
+  <!-- Detection ring -->
+  <circle cx="150" cy="150" r="130" fill="none" stroke="#4CAF50" stroke-width="2" stroke-dasharray="10 5" opacity="0.6">
+    <animate attributeName="stroke-dashoffset" values="0;15" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
