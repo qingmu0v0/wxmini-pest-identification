@@ -12,7 +12,7 @@
 
 包含微信小程序 · Web官网 · 后端服务
 
-[快速开始](#-快速开始) · [在线演示](#) · [文档](docs/) · [报告问题](#)
+[快速开始](#-快速开始) · [在线演示](https://qingmu.cloud) · [文档](docs/) · [报告问题](#)
 
 </div>
 
@@ -24,7 +24,7 @@
 
 ### ✨ 核心功能
 
-- 🐛 **虫蛀检测** - 智能识别虫蛀痕迹，评估风险等级（0-3级）
+- 🐛 **虫蛀检测** - 智能识别虫蛀痕迹
 - 🦗 **蚜虫识别** - 精准检测蚜虫，估算数量（少量/中等/大量）
 - 💊 **防治建议** - 提供专业的生物和化学防治方案
 - 🤖 **多模型支持** - 集成QWEN3、GPT-4、Claude等主流大模型
@@ -223,23 +223,6 @@ ai:
     api-key: your-qwen-api-key
 ```
 
-### GPT-4 Vision (可选)
-
-```yaml
-ai:
-  gpt4:
-    enabled: true
-    api-key: your-openai-api-key
-```
-
-### Claude 3 (可选)
-
-```yaml
-ai:
-  claude:
-    enabled: true
-    api-key: your-claude-api-key
-```
 
 ## 📱 功能特性
 
@@ -448,8 +431,8 @@ A: 本系统开源免费，但AI服务可能需要费用（取决于供应商）
 
 ## 📧 联系我们
 
-- 📮 **Email**: support@plantpest.com
-- 💬 **微信**: 植物病虫害识别
+- 📮 **Email**: qingmu0v0@outlook.com
+- 💬 **微信小程序**: 植物病虫害识别
 - 🐛 **问题反馈**: [GitHub Issues](../../issues)
 - 📝 **功能建议**: [GitHub Discussions](../../discussions)
 
@@ -485,8 +468,8 @@ A: 本系统开源免费，但AI服务可能需要费用（取决于供应商）
 
 **Made with ❤️ by Plant Pest Team**
 
-**开发时间**: 2025-10-11  
-**当前版本**: v1.0.0
+**开发时间**: 2025-11-04 
+**当前版本**: v1.1.0
 
 [⬆ 回到顶部](#-植物病虫害ai识别系统)
 
