@@ -1,26 +1,13 @@
+# 开发环境配置文件
+
 server:
   port: 8080
   servlet:
     context-path: /api
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
 
 spring:
-  # 默认激活的profile
-  profiles:
-    active: master
-  
   application:
     name: plant-pest-analysis
-  
-  # HTTP消息转换器配置
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
   
   # 文件上传配置
   servlet:
@@ -28,12 +15,12 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   
-  # 数据库配置（根据实际情况修改）
+  # 数据库配置（开发环境使用本地数据库）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.93.147.90:3306/plant_pest?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/plant_pest?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: M22/B6!DxoDw
+    password: root
   
   # MyBatis Plus配置
   mybatis-plus:
@@ -58,8 +45,9 @@ ai:
   # QWEN3配置（通义千问）
   qwen3:
     enabled: true
-    api-key: sk-6873d82a6bcf4abd9619c6c1fdb5cf3a
-    # endpoint: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation  # SDK自动处理
+    # 从环境变量获取，或直接填写: your-qwen-api-key
+    api-key: ${QWEN_API_KEY:your-qwen-api-key}
+    endpoint: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
     model: qwen-vl-plus
   
   # GPT-4 Vision配置（可选）
@@ -78,5 +66,22 @@ ai:
 
 # 跨域配置
 cors:
-  allowed-origins: "http://localhost:8081,http://localhost:8082"
-  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+  allowed-origins: 
+    - http://localhost:8081
+    - http://localhost:8082
+  allowed-methods: 
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+
+# 日志配置
+logging:
+  level:
+    com.plantpest: DEBUG
+    root: INFO
+  file:
+    name: logs/plant-pest-dev.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

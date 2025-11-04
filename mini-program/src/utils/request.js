@@ -91,6 +91,7 @@ const uploadFile = (filePath, modelType, hideLoading = false) => {
             modelType: modelType,
           },
           success: (uploadFileRes) => {
+            console.log('上传成功，响应:', uploadFileRes);
             if (!hideLoading) {
               uni.hideLoading();
             }
@@ -122,6 +123,7 @@ const uploadFile = (filePath, modelType, hideLoading = false) => {
             }
           },
           fail: (err) => {
+            console.error('上传失败，错误:', err);
             if (!hideLoading) {
               uni.hideLoading();
             }

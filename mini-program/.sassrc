@@ -1,0 +1,14 @@
+{
+  "silenceDeprecations": [
+    "legacy-js-api",
+    "global-builtin", 
+    "import",
+    "mixed-decls",
+    "string-div",
+    "unitless-zero"
+  ],
+  "quietDeps": true,
+  "quiet": true,
+  "verbose": false,
+  "logLevel": "error"
+}

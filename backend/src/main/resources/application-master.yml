@@ -1,5 +1,4 @@
-# 配置文件示例
-# 复制此文件为 application.yml 并修改相应配置
+# 生产环境配置文件
 
 server:
   port: 8080
@@ -16,18 +15,19 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   
-  # 数据库配置
+  # 数据库配置（生产环境使用远程数据库）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/plant_pest?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://47.93.147.90:3306/plant_pest?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: your_password_here
+    password: M22/B6!DxoDw
   
   # MyBatis Plus配置
   mybatis-plus:
     configuration:
       map-underscore-to-camel-case: true
-      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+      # 生产环境关闭SQL日志
+      log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     global-config:
       db-config:
         logic-delete-field: deleted
@@ -46,31 +46,29 @@ ai:
   # QWEN3配置（通义千问）
   qwen3:
     enabled: true
-    # 从环境变量获取，或直接填写: your-qwen-api-key
-    api-key: ${QWEN_API_KEY:your-qwen-api-key}
+    # 从环境变量获取API密钥
+    api-key: ${QWEN_API_KEY}
     endpoint: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
     model: qwen-vl-plus
   
   # GPT-4 Vision配置（可选）
   gpt4:
     enabled: false
-    api-key: ${OPENAI_API_KEY:your-openai-api-key}
+    api-key: ${OPENAI_API_KEY}
     endpoint: https://api.openai.com/v1/chat/completions
     model: gpt-4-vision-preview
   
   # Claude配置（可选）
   claude:
     enabled: false
-    api-key: ${CLAUDE_API_KEY:your-claude-api-key}
+    api-key: ${CLAUDE_API_KEY}
     endpoint: https://api.anthropic.com/v1/messages
     model: claude-3-opus-20240229
 
 # 跨域配置
 cors:
   allowed-origins: 
-    - http://localhost:8081
-    - http://localhost:8082
-    - https://your-domain.com
+    - https://your-production-domain.com
   allowed-methods: 
     - GET
     - POST
@@ -81,9 +79,9 @@ cors:
 # 日志配置
 logging:
   level:
-    com.plantpest: INFO
-    root: INFO
+    com.plantpest: WARN
+    root: WARN
   file:
-    name: logs/plant-pest.log
+    name: logs/plant-pest-prod.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

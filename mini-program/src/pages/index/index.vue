@@ -1,898 +1,358 @@
 <template>
-  <view class="tamagui-container">
-    <!-- 顶部标题区域 -->
-    <view class="tamagui-header">
-      <text class="tamagui-title">🌱 虫害识别</text>
-      <text class="tamagui-subtitle">🤖 智能识别农作物病虫害</text>
+  <view class="container">
+    <view class="header">
+      <!-- New Animated Logo -->
+      <view class="logo-container">
+        <image class="logo-image" src="/static/AI.png" mode="aspectFit"></image>
+      </view>
+      <text class="title">AI植物虫害识别</text>
+      <text class="subtitle" :key="currentSubtitle">{{ currentSubtitle }}</text>
     </view>
 
-    <!-- 模型选择区域 -->
-    <view class="tamagui-card">
-      <text class="tamagui-card-title">🔧 选择识别模型</text>
-      <view class="tamagui-model-selector">
-        <view 
-          v-for="(model, index) in models" 
-          :key="index"
-          :class="['tamagui-model-item', { 'tamagui-model-item-active': modelIndex === index }]"
-          @tap="onModelChange({ detail: { value: index } })"
-        >
-          <text class="tamagui-model-text">{{ model.name }}</text>
+    <wd-card title="开始识别" custom-class="main-card">
+      <view class="card-content">
+        <wd-icon name="camera" size="50px" color="#4caf50"></wd-icon>
+        <text class="upload-text">请上传或拍摄一张清晰的害虫照片</text>
+      </view>
+      <wd-button type="success" block size="large" custom-class="scan-button" @click="startScan">
+        拍照识别
+      </wd-button>
+    </wd-card>
+
+    <wd-grid :column="2" clickable custom-class="menu-grid">
+      <view @click="goToHistory">
+        <wd-grid-item icon="history" text="识别历史" />
+      </view>
+      <view @click="goToAbout">
+        <wd-grid-item icon="info-circle" text="关于我们" />
+      </view>
+    </wd-grid>
+
+    <view class="footer">
+      <text>青木 © 2025</text>
+      <view class="contact-info">
+        <view class="contact-item" @click="copyEmail">
+          <wd-icon name="mail" size="16px" color="#4caf50"></wd-icon>
+          <text class="email">qingmu0v0@outlook.com</text>
+        </view>
+        <view class="contact-item" @click="openWebsite">
+          <wd-icon name="link" size="16px" color="#4caf50"></wd-icon>
+          <text class="website">qingmu.cloud</text>
         </view>
       </view>
+      <text class="icp-number">鄂ICP备2025089336号</text>
     </view>
-
-    <!-- 图片上传区域 -->
-      <view v-if="!imageUrl" class="tamagui-card">
-        <text class="tamagui-card-title">📸 上传图片</text>
-        <view class="tamagui-upload-area" @tap="chooseImage">
-          <view class="tamagui-upload-placeholder">
-            <text class="tamagui-upload-icon">📷</text>
-            <text class="tamagui-upload-text">点击上传图片</text>
-          </view>
-        </view>
-      </view>
-      
-      <!-- 图片预览区域 -->
-      <view v-if="imageUrl" class="tamagui-card">
-        <text class="tamagui-card-title">📸 已上传图片</text>
-        <view class="tamagui-image-preview-container">
-          <image :src="imageUrl" class="tamagui-preview-image" mode="aspectFit" />
-          <button class="tamagui-reupload-button" @tap="chooseImage">
-            <text class="tamagui-reupload-icon">🔄</text>
-            <text class="tamagui-reupload-text">重新上传</text>
-          </button>
-        </view>
-      </view>
-      
-      <view v-if="imageUrl" class="tamagui-actions">
-        <button class="tamagui-action-button tamagui-reselect" @tap="chooseImage">重新选择</button>
-        <button class="tamagui-action-button tamagui-clear" @tap="clearImage">清除图片</button>
-      </view>
-
-    <!-- 识别按钮 -->
-    <view class="tamagui-button-container">
-      <button 
-        class="tamagui-button" 
-        :disabled="!imageUrl || isIdentifying"
-        @tap="identifyPest"
-      >
-        <text v-if="isIdentifying" class="tamagui-button-icon">⏳</text>
-        <text v-else class="tamagui-button-icon">🔍</text>
-        <text v-if="isIdentifying" class="tamagui-button-text">识别中...</text>
-        <text v-else class="tamagui-button-text">识别病虫害</text>
-      </button>
-    </view>
-
-    <!-- 历史记录按钮 -->
-    <view class="tamagui-button-container">
-      <button class="tamagui-button tamagui-button-secondary" @tap="goToHistory">
-        <text class="tamagui-button-icon">📋</text>
-        <text class="tamagui-button-text">识别历史</text>
-      </button>
-    </view>
-
-    <!-- 识别结果区域 -->
-      <view v-if="result || errorResult" class="tamagui-card">
-        <text class="tamagui-card-title">🎯 识别结果</text>
-        
-        <!-- 成功结果 -->
-        <view v-if="result" class="tamagui-result-container" :class="{ 'tamagui-result-show': result }">
-          <view class="tamagui-result-header">
-            <text class="tamagui-result-name">🌿 {{ result.name }}</text>
-            <view class="tamagui-confidence-badge">
-              <text class="tamagui-confidence-text">🎯 置信度: {{ result.confidence }}%</text>
-            </view>
-          </view>
-          
-          <view v-if="result.hasWormDamage !== undefined" class="tamagui-result-section">
-            <text class="tamagui-result-section-title">🐛 虫害情况</text>
-            <view class="tamagui-worm-status">
-              <text :class="['tamagui-worm-status-text', result.hasWormDamage ? 'tamagui-worm-danger' : 'tamagui-worm-safe']">
-                {{ result.hasWormDamage ? '🐛 发现虫害' : '✅ 无虫害' }}
-              </text>
-              <text v-if="result.wormRiskLevel !== undefined" :class="['tamagui-risk-level', 
-                result.wormRiskLevel >= 4 ? 'tamagui-risk-high' : 
-                result.wormRiskLevel >= 2 ? 'tamagui-risk-medium' : 'tamagui-risk-low']">
-                ⚠️ 风险等级: {{ result.wormRiskLevel }}/5
-              </text>
-            </view>
-          </view>
-          
-          <view v-if="result.hasAphid !== undefined" class="tamagui-result-section">
-            <text class="tamagui-result-section-title">🐜 蚜虫情况</text>
-            <text :class="['tamagui-aphid-status', result.hasAphid ? 'tamagui-aphid-detected' : 'tamagui-aphid-none']">
-              {{ result.hasAphid ? `🐜 发现蚜虫: ${result.aphidCount || '未知数量'}` : '✅ 无蚜虫' }}
-            </text>
-          </view>
-          
-          <view class="tamagui-result-section">
-            <text class="tamagui-result-section-title">🔍 详细分析</text>
-            <text class="tamagui-result-analysis">{{ result.detailedAnalysis }}</text>
-          </view>
-          
-          <view class="tamagui-result-section">
-            <text class="tamagui-result-section-title">💡 防治建议</text>
-            <text class="tamagui-result-suggestion">{{ result.suggestion }}</text>
-          </view>
-        </view>
-        
-        <!-- 错误结果 -->
-        <view v-if="errorResult" class="tamagui-error-container" :class="{ 'tamagui-error-show': errorResult }">
-          <view class="tamagui-error-header">
-            <text class="tamagui-error-icon">❌</text>
-            <text class="tamagui-error-title">识别失败</text>
-          </view>
-          
-          <view class="tamagui-error-section">
-            <text class="tamagui-error-section-title">🔧 使用模型</text>
-            <text class="tamagui-error-model">{{ errorResult.modelUsed }}</text>
-          </view>
-          
-          <view class="tamagui-error-section">
-            <text class="tamagui-error-section-title">⚠️ 错误信息</text>
-            <text class="tamagui-error-message">{{ errorResult.errorMessage }}</text>
-          </view>
-          
-          <view class="tamagui-error-suggestion">
-            <text class="tamagui-error-suggestion-text">💡 请尝试更换模型或重新上传图片</text>
-          </view>
-        </view>
-      </view>
   </view>
 </template>
 
-<script>
-import { getModels, uploadFile, analyzeImageBase64 } from '@/utils/request';
-import { DEFAULT_AI_MODEL, MAX_FILE_SIZE, STORAGE_KEY } from '@/utils/config';
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app';
+import { uploadFile } from '../../utils/request'; // 导入上传文件方法
 
-export default {
-  data() {
-    return {
-      imageUrl: '',
-      isIdentifying: false,
-      models: [],
-      modelIndex: 0,
-      result: null, // 添加 result 数据属性
-      errorResult: null, // 添加 errorResult 数据属性
-      // 添加一个默认模型，防止models为空时显示问题
-      defaultModel: { name: '加载中...' },
-    };
-  },
-  onLoad() {
-    this.loadModels();
-  },
-  computed: {
-    currentModelType() {
-      return this.models[this.modelIndex] ? this.models[this.modelIndex].type : '';
-    }
-  },
-  methods: {
-    async loadModels() {
+const subtitles = ref(['一眼认出病虫害，守住丰收粮满仓', '庄稼生病早知道，提前防治损失少', '科技种田就是好，粮食更多，票子也多']);
+const currentSubtitleIndex = ref(0);
+let intervalId: any = null;
+
+const currentSubtitle = computed(() => subtitles.value[currentSubtitleIndex.value]);
+
+onMounted(() => {
+  intervalId = setInterval(() => {
+    currentSubtitleIndex.value = (currentSubtitleIndex.value + 1) % subtitles.value.length;
+  }, 3000);
+});
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+});
+
+// 分享功能
+onShareAppMessage(() => {
+  return {
+    title: 'AI植物虫害识别 - 精准识别，守护丰收',
+    path: '/pages/index/index',
+    imageUrl: '/static/share-image.png' // 分享图片，如果没有会使用默认截图
+  };
+});
+
+// 分享到朋友圈
+onShareTimeline(() => {
+  return {
+    title: 'AI植物虫害识别 - 智能分析，预警病害',
+    query: '',
+    imageUrl: '/static/share-image.png' // 分享图片，如果没有会使用默认截图
+  };
+});
+
+const startScan = () => {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['original', 'compressed'],
+    sourceType: ['album', 'camera'],
+    success: async (res) => {
+      const imagePath = res.tempFilePaths[0];
+      console.log('选择的图片路径:', imagePath);
       try {
-        const res = await getModels();
-        if (res && res.length > 0) {
-          // 后端返回的是字符串数组，需要转换为包含name和type的对象数组
-          this.models = res.map(modelType => {
-            // 为模型类型创建更友好的显示名称
-            let displayName = modelType;
-            switch(modelType) {
-              case 'qwen3':
-                displayName = '通义千问 Qwen3';
-                break;
-              case 'gpt4':
-                displayName = 'GPT-4';
-                break;
-              case 'claude':
-                displayName = 'Claude';
-                break;
-              default:
-                displayName = modelType;
-            }
-            return { name: displayName, type: modelType };
-          });
-          
-          // 尝试查找默认模型，如果不存在则选中第一个
-          const defaultModelIndex = this.models.findIndex(model => model.type === DEFAULT_AI_MODEL);
-          this.modelIndex = defaultModelIndex !== -1 ? defaultModelIndex : 0;
-        } else {
-          this.models = [{ name: '无可用模型', type: '' }];
-        }
-      } catch (error) {
-        console.error('加载模型失败:', error);
-        uni.showToast({ title: '加载模型失败', icon: 'none' });
-        this.models = [{ name: '加载失败', type: '' }];
-      }
-    },
-    chooseImage() {
-      uni.chooseImage({
-        count: 1,
-        sizeType: ['compressed'],
-        sourceType: ['album', 'camera'],
-        success: (res) => {
-          const tempFilePath = res.tempFilePaths[0];
-          // 可以在这里进行图片尺寸的预处理，例如限制大小或压缩
-          this.imageUrl = tempFilePath;
-          this.result = null;
-          this.errorResult = null;
-        },
-        fail: (err) => {
-          console.error('选择图片失败:', err);
-          uni.showToast({ title: '选择图片失败', icon: 'none' });
-        }
-      });
-    },
-    clearImage() {
-      this.imageUrl = '';
-      this.result = null;
-      this.errorResult = null;
-    },
-    onModelChange(e) {
-      this.modelIndex = e.detail.value;
-    },
-    async identifyPest() {
-      if (!this.imageUrl) {
-        uni.showToast({ title: '请先选择图片', icon: 'none' });
-        return;
-      }
-      if (!this.currentModelType) {
-        uni.showToast({ title: '请选择一个有效的识别模型', icon: 'none' });
-        return;
-      }
+        // 调用上传文件方法，默认模型类型为qwen3
+        console.log('开始上传图片...');
+        const analysisResult = await uploadFile(imagePath, 'qwen3');
+        console.log('分析结果:', analysisResult);
 
-      this.isIdentifying = true;
-      this.result = null; // 清除之前的结果
-      this.errorResult = null; // 清除之前的错误
-
-      try {
-        let resultData;
-        // 根据图片大小决定使用文件上传还是Base64上传
-        const fileInfo = await uni.getFileInfo({
-          filePath: this.imageUrl
-        });
-
-        if (fileInfo.size <= MAX_FILE_SIZE) {
-          // 文件大小在限制内，使用文件上传
-          const res = await uploadFile(this.imageUrl, this.currentModelType);
-          resultData = res; // 假设res直接是所需数据
-        } else {
-          // 文件过大，转换为Base64上传
-          const base64 = await this.pathToBase64(this.imageUrl);
-          const res = await analyzeImageBase64(base64.split(',')[1], this.currentModelType);
-          resultData = res;
-        }
-
-        // 检查后端返回的数据结构，确保与result页面兼容
-        if (resultData && resultData.success) {
-          // 适配后端返回的数据结构
-          this.result = {
-            name: resultData.plantName || '未知植物',
-            confidence: 95, // 后端没有返回置信度，使用默认值
-            detailedAnalysis: resultData.detailedAnalysis || '暂无详细信息',
-            suggestion: resultData.suggestion || '暂无防治建议',
-            hasWormDamage: resultData.hasWormDamage || false,
-            wormRiskLevel: resultData.wormRiskLevel || 0,
-            hasAphid: resultData.hasAphid || false,
-            aphidCount: resultData.aphidCount || '无',
-            modelUsed: resultData.modelUsed || this.currentModelType,
-          };
-          
-          // 保存到历史记录
-          const historyResult = {
-            ...this.result,
-            imageUrl: this.imageUrl,
+        // 保存识别历史
+        try {
+          let history = uni.getStorageSync('recognitionHistory');
+          history = history ? JSON.parse(history) : [];
+          history.push({
+            imagePath: imagePath,
+            analysisResult: analysisResult,
             timestamp: Date.now(),
-          };
-          this.saveHistory(historyResult);
-          
-          uni.showToast({ title: '识别成功', icon: 'success' });
-        } else {
-          // 处理识别失败的情况
-          this.errorResult = {
-            modelUsed: resultData?.modelUsed || this.currentModelType,
-            errorMessage: resultData?.errorMessage || '识别失败，请重试',
-          };
-          
-          uni.showToast({ title: '识别失败', icon: 'none' });
+          });
+          uni.setStorageSync('recognitionHistory', JSON.stringify(history));
+        } catch (e) {
+          console.error('Failed to save recognition history', e);
         }
 
+        uni.navigateTo({
+          url: '/pages/result/result?image=' + encodeURIComponent(imagePath) + '&analysisResult=' + encodeURIComponent(JSON.stringify(analysisResult)),
+        });
       } catch (error) {
-        // 处理异常情况
-        this.errorResult = {
-          modelUsed: this.currentModelType,
-          errorMessage: error.message || error || '识别失败，请重试',
-        };
-        
-        uni.showToast({ title: `识别失败: ${error.message || error}`, icon: 'none' });
-        console.error('识别失败', error);
-      } finally {
-        this.isIdentifying = false;
-        uni.hideLoading();
+        console.error('图片上传或分析失败', error);
+        uni.showToast({
+          title: '识别失败，请重试',
+          icon: 'none',
+        });
       }
     },
-    async pathToBase64(filePath) {
-      return new Promise((resolve, reject) => {
-        uni.getFileSystemManager().readFile({
-          filePath: filePath,
-          encoding: 'base64',
-          success: (res) => {
-            resolve('data:image/jpeg;base64,' + res.data);
-          },
-          fail: (err) => {
-            reject(err);
-          },
-        });
-      });
-    },
-    saveHistory(result) {
-      let history = uni.getStorageSync(STORAGE_KEY) || [];
-      history.unshift(result);
-      uni.setStorageSync(STORAGE_KEY, history);
-    },
-    goToHistory() {
-      uni.navigateTo({
-        url: '/pages/history/history',
-      });
-    },
-  },
+  });
 };
 
+const goToHistory = () => {
+  uni.navigateTo({
+    url: '/pages/history/history',
+  });
+};
+
+const goToAbout = () => {
+  uni.navigateTo({
+    url: '/pages/about/about',
+  });
+};
+
+// 复制邮箱地址
+const copyEmail = () => {
+  uni.setClipboardData({
+    data: 'qingmu0v0@outlook.com',
+    success: () => {
+      uni.showToast({
+        title: '邮箱已复制',
+        icon: 'success',
+        duration: 2000
+      });
+    }
+  });
+};
+
+// 打开官网
+const openWebsite = () => {
+  uni.showModal({
+    title: '提示',
+    content: '即将跳转到青木官网',
+    success: (res) => {
+      if (res.confirm) {
+        // 在小程序中可以使用web-view或者复制链接让用户在浏览器中打开
+        uni.setClipboardData({
+          data: 'https://qingmu.cloud',
+          success: () => {
+            uni.showToast({
+              title: '网址已复制，请在浏览器中打开',
+              icon: 'none',
+              duration: 3000
+            });
+          }
+        });
+      }
+    }
+  });
+};
 </script>
 
-<style>
-/* Tamagui 风格 - 简洁现代的设计 */
-.tamagui-container {
+<style lang="scss" scoped>
+.container {
   display: flex;
   flex-direction: column;
-  padding: 24rpx;
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  align-items: center;
+  justify-content: flex-start;
   min-height: 100vh;
-  gap: 24rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #e0f2e0, #f5fff5, #e6f7ff);
+  background-size: 400% 400%;
+  animation: backgroundAnimation 15s ease infinite;
 }
 
-/* 顶部标题区域 */
-.tamagui-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 32rpx 0 16rpx;
-  animation: fadeInDown 0.8s ease-out;
+@keyframes backgroundAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.tamagui-title {
-  font-size: 48rpx;
-  font-weight: 700;
-  background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 50%, #4caf50 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 8rpx;
-  letter-spacing: -0.5rpx;
-  text-shadow: 0 2rpx 4rpx rgba(46, 125, 50, 0.1);
-  animation: pulse 2s infinite alternate;
-}
-
-.tamagui-subtitle {
-  font-size: 28rpx;
-  background: linear-gradient(135deg, #666 0%, #888 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 400;
-  animation: fadeIn 1s ease-out 0.3s both;
-}
-
-/* 卡片样式 */
-.tamagui-card {
-  background-color: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
-  border: 1rpx solid rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(10rpx);
-}
-
-.tamagui-card-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 16rpx;
-}
-
-/* 模型选择器 */
-.tamagui-model-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 12rpx;
-}
-
-.tamagui-model-item {
-  padding: 20rpx 24rpx;
-  border-radius: 12rpx;
-  background-color: #f5f5f5;
-  border: 1rpx solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tamagui-model-item-active {
-  background-color: #000;
-  border-color: #000;
-}
-
-.tamagui-model-item-active .tamagui-model-text {
-  color: #fff;
-}
-
-.tamagui-model-text {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-/* 上传区域 */
-.tamagui-upload-area {
-  height: 300rpx;
-  border-radius: 12rpx;
-  background-color: #f5f5f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.tamagui-preview-image {
-  width: 100%;
-  height: 400rpx;
-  border-radius: 16rpx;
-  margin-bottom: 20rpx;
-  object-fit: cover;
-}
-
-.tamagui-image-preview-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.tamagui-reupload-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8rpx;
-  background: linear-gradient(135deg, #4CAF50, #388E3C);
-  color: white;
-  border: none;
-  border-radius: 12rpx;
-  padding: 16rpx 32rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
-  transition: all 0.3s ease;
-  margin-top: 20rpx;
-}
-
-.tamagui-reupload-icon {
-  font-size: 24rpx;
-}
-
-.tamagui-reupload-text {
-  font-size: 28rpx;
-}
-
-.tamagui-upload-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12rpx;
-}
-
-.tamagui-upload-icon {
-  font-size: 60rpx;
-  opacity: 0.6;
-}
-
-.tamagui-upload-text {
-  font-size: 28rpx;
-  color: #666;
-}
-
-/* 操作按钮 */
-.tamagui-actions {
-  display: flex;
-  gap: 12rpx;
-  margin-top: 16rpx;
-}
-
-.tamagui-action-button {
-  flex: 1;
-  padding: 16rpx;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  font-weight: 500;
-  text-align: center;
-  border: none;
-}
-
-.tamagui-reselect {
-  background: linear-gradient(135deg, #4CAF50, #388E3C);
-  color: #fff;
-  box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
-}
-
-.tamagui-clear {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-/* 主按钮 */
-.tamagui-button-container {
-  margin: 8rpx 0;
-}
-
-.tamagui-button {
-    width: 100%;
-    padding: 24rpx;
-    border-radius: 12rpx;
-    background: linear-gradient(135deg, #4CAF50, #388E3C);
-    color: #fff;
-    border: none;
-    font-size: 32rpx;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12rpx;
-    transition: all 0.3s ease;
-    box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .tamagui-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-  }
-
-  .tamagui-button:hover::before {
-    left: 100%;
-  }
-
-  .tamagui-button:hover {
-    transform: translateY(-4rpx);
-    box-shadow: 0 8rpx 16rpx rgba(76, 175, 80, 0.4);
-  }
-  
-  .tamagui-button-icon {
-    font-size: 28rpx;
-  }
-  
-  .tamagui-button:active {
-    transform: translateY(-2rpx) scale(0.98);
-    box-shadow: 0 2rpx 8rpx rgba(76, 175, 80, 0.3);
-  }
-  
-  .tamagui-button[disabled] {
-    background: linear-gradient(135deg, #a5d6a7, #81c784);
-    color: #e8f5e9;
-    box-shadow: none;
-  }
-
-  .tamagui-button[disabled]:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .tamagui-button[disabled]:active {
-    transform: none;
-  }
-  
-  .tamagui-button-secondary {
-    background-color: #f5f5f5;
-    color: #333;
-  }
-
-  .tamagui-button-secondary:hover {
-    background-color: #eeeeee;
-  }
-  
-  .tamagui-button-text {
-    font-size: 32rpx;
-    font-weight: 600;
-  }
-
-/* 识别结果区域动画 */
-  .tamagui-result-container {
-    opacity: 0;
-    transform: translateY(20rpx) scale(0.95);
-    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-
-  .tamagui-result-show {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    animation: bounce 0.6s ease-out;
-  }
-
-  .tamagui-result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 16rpx;
-    border-bottom: 1rpx solid #eee;
-    animation: fadeIn 0.8s ease-out 0.2s both;
-  }
-
-  .tamagui-result-name {
-    font-size: 36rpx;
-    font-weight: 700;
-    background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 50%, #4caf50 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: glow 2s infinite alternate;
-  }
-
-  .tamagui-confidence-badge {
-    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-    padding: 8rpx 16rpx;
-    border-radius: 20rpx;
-    animation: fadeIn 0.8s ease-out 0.3s both;
-  }
-
-  .tamagui-confidence-text {
-    font-size: 24rpx;
-    color: #fff;
-    font-weight: 500;
-  }
-
-  .tamagui-result-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8rpx;
-    animation: fadeIn 0.8s ease-out 0.4s both;
-  }
-
-  .tamagui-result-section-title {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: #000;
-  }
-
-  .tamagui-worm-status {
-    display: flex;
-    align-items: center;
-    gap: 16rpx;
-  }
-
-  .tamagui-worm-status-text {
-    font-size: 28rpx;
-    font-weight: 500;
-  }
-
-  .tamagui-worm-danger {
-    background: linear-gradient(135deg, #d32f2f 0%, #ef5350 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 700;
-  }
-
-  .tamagui-worm-safe {
-    background: linear-gradient(135deg, #388e3c 0%, #66bb6a 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 700;
-  }
-
-  .tamagui-risk-level {
-    font-size: 24rpx;
-    font-weight: 600;
-    padding: 4rpx 12rpx;
-    border-radius: 12rpx;
-  }
-
-  .tamagui-risk-high {
-    background: linear-gradient(135deg, #d32f2f 0%, #ef5350 100%);
-    color: #fff;
-  }
-
-  .tamagui-risk-medium {
-    background: linear-gradient(135deg, #f57c00 0%, #ffb74d 100%);
-    color: #fff;
-  }
-
-  .tamagui-risk-low {
-    background: linear-gradient(135deg, #388e3c 0%, #66bb6a 100%);
-    color: #fff;
-  }
-
-  .tamagui-aphid-status {
-    font-size: 28rpx;
-    font-weight: 500;
-  }
-
-  .tamagui-aphid-detected {
-    background: linear-gradient(135deg, #d32f2f 0%, #ef5350 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 700;
-  }
-
-  .tamagui-aphid-none {
-    background: linear-gradient(135deg, #388e3c 0%, #66bb6a 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 700;
-  }
-
-  .tamagui-result-analysis,
-  .tamagui-result-suggestion {
-    font-size: 28rpx;
-    line-height: 1.5;
-    color: #333;
-  }
-
-/* 错误结果区域样式 */
-.tamagui-error-container {
+.header, .main-card, .menu-grid {
+  animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
-  transform: translateY(20rpx) scale(0.95);
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.tamagui-error-show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  animation: shake 0.5s ease-in-out;
+.main-card {
+  animation-delay: 0.2s;
 }
 
-.tamagui-error-header {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  padding-bottom: 16rpx;
-  border-bottom: 1rpx solid #eee;
-  margin-bottom: 16rpx;
-  animation: fadeIn 0.8s ease-out 0.2s both;
+.menu-grid {
+  animation-delay: 0.4s;
 }
 
-.tamagui-error-icon {
-  font-size: 40rpx;
-  color: #d32f2f;
-  animation: pulse 1s infinite alternate;
-}
-
-.tamagui-error-title {
-  font-size: 36rpx;
-  font-weight: 700;
-  background: linear-gradient(135deg, #d32f2f 0%, #ef5350 50%, #e57373 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.tamagui-error-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
-  margin-bottom: 16rpx;
-  animation: fadeIn 0.8s ease-out 0.3s both;
-}
-
-.tamagui-error-section-title {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #000;
-}
-
-.tamagui-error-model {
-  font-size: 28rpx;
-  color: #333;
-  padding: 8rpx 16rpx;
-  background-color: #f5f5f5;
-  border-radius: 8rpx;
-  animation: fadeIn 0.8s ease-out 0.4s both;
-}
-
-.tamagui-error-message {
-  font-size: 28rpx;
-  color: #d32f2f;
-  padding: 16rpx;
-  background-color: #ffebee;
-  border-radius: 8rpx;
-  border-left: 4rpx solid #d32f2f;
-  animation: fadeIn 0.8s ease-out 0.5s both;
-}
-
-.tamagui-error-suggestion {
-  margin-top: 16rpx;
-  padding: 16rpx;
-  background-color: #e8f5e9;
-  border-radius: 8rpx;
-  border-left: 4rpx solid #4caf50;
-  animation: fadeIn 0.8s ease-out 0.6s both;
-}
-
-.tamagui-error-suggestion-text {
-  font-size: 28rpx;
-  color: #2e7d32;
-}
-
-/* 动画关键帧 */
-@keyframes fadeInDown {
+@keyframes fadeInUp {
   from {
+    transform: translateY(30rpx);
     opacity: 0;
-    transform: translateY(-20rpx);
   }
   to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-top: 80rpx;
+  margin-bottom: 60rpx;
+
+  .logo-container {
+    width: 150rpx;
+    height: 150rpx;
+    margin: 0 auto 20rpx;
+    animation: float 4s ease-in-out infinite;
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15rpx);
+  }
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-top: 10rpx;
+  height: 40rpx;
+  display: block; /* Changed from inline-block to block */
+  background: linear-gradient(45deg, #4caf50, #2196f3, #f44336, #ffeb3b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 400% 400%;
+  animation: gradientAnimation 6s ease infinite, fadeInOut 3s ease-in-out infinite;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInOut {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translateY(10rpx);
+  }
+  10%, 80% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+:deep(.main-card) {
+  width: 90%;
+  margin-bottom: 80rpx; /* 增加底部边距，提供更多空白 */
+  --wd-card-border-radius: 40rpx;
+  --wd-card-box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.05);
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40rpx 0;
+    .upload-text {
+      font-size: 26rpx;
+      color: #666;
+      margin-top: 20rpx;
+    }
   }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.02);
-  }
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-4rpx);
-  }
-  20%, 40%, 60%, 80% {
-    transform: translateX(4rpx);
+  .scan-button {
+    margin-top: 20rpx;
+    margin-bottom: 20rpx; /* 增加按钮底部边距 */
+    --wd-button-large-height: 90rpx;
+    --wd-button-border-radius: 50rpx;
+    font-size: 32rpx;
   }
 }
 
-@keyframes bounce {
-  0%, 20%, 53%, 80%, 100% {
-    transform: translate3d(0, 0, 0);
-  }
-  40%, 43% {
-    transform: translate3d(0, -8rpx, 0);
-  }
-  70% {
-    transform: translate3d(0, -4rpx, 0);
-  }
-  90% {
-    transform: translate3d(0, -2rpx, 0);
-  }
+:deep(.menu-grid) {
+  width: 90%;
+  --wd-grid-item-content-padding: 30rpx 16rpx;
+  --wd-grid-item-icon-size: 50rpx;
+  --wd-grid-item-text-font-size: 26rpx;
+  --wd-grid-item-text-margin-top: 16rpx;
+  --wd-grid-item-bg-color: rgba(255, 255, 255, 0.7);
+  --wd-grid-item-border-radius: 20rpx;
 }
 
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 5rpx rgba(76, 175, 80, 0.5);
+.footer {
+    position: absolute;
+    bottom: 40rpx;
+    font-size: 24rpx;
+    color: #888;
+    text-align: center;
+    width: 100%;
+    
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20rpx;
+      margin-top: 10rpx;
+      
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+        
+        .email, .website {
+          color: #4caf50;
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .icp-number {
+      font-size: 20rpx;
+      color: #999;
+      margin-top: 10rpx;
+    }
   }
-  50% {
-    box-shadow: 0 0 20rpx rgba(76, 175, 80, 0.8);
-  }
-  100% {
-    box-shadow: 0 0 5rpx rgba(76, 175, 80, 0.5);
-  }
-}
 </style>

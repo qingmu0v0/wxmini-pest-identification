@@ -177,9 +177,11 @@ public class AIService {
                 请分析这张植物图片，重点识别以下内容：
                 1. 植物名称或类型
                 2. 是否存在虫蛀痕迹，评估虫蛀风险等级（0-无风险，1-低风险，2-中风险，3-高风险）
-                3. 是否检测到蚜虫，如有请估计数量（少量/中等/大量）
-                4. 提供详细的病虫害分析
-                5. 给出防治建议
+                3. 是否检测到蚜虫，如有请估计数量（少量/中等/大量）并识别蚜虫种类
+                4. 识别图片中的主要对象是植物还是害虫
+                5. 提供详细的病虫害分析
+                6. 给出防治建议
+                7. 评估识别的置信度（0.0-1.0）
                 
                 请以JSON格式返回结果：
                 {
@@ -188,6 +190,10 @@ public class AIService {
                   "wormRiskLevel": 0-3,
                   "hasAphid": true/false,
                   "aphidCount": "少量/中等/大量/无",
+                  "aphidSpecies": "蚜虫种类名称（如棉蚜、桃蚜等）",
+                  "confidence": 0.95,
+                  "identificationType": "plant或pest",
+                  "pestName": "害虫名称（如果识别的是害虫）",
                   "detailedAnalysis": "详细分析内容",
                   "suggestion": "防治建议"
                 }
@@ -225,6 +231,10 @@ public class AIService {
                     .wormRiskLevel(result.has("wormRiskLevel") ? result.get("wormRiskLevel").getAsInt() : 0)
                     .hasAphid(result.has("hasAphid") ? result.get("hasAphid").getAsBoolean() : false)
                     .aphidCount(result.has("aphidCount") ? result.get("aphidCount").getAsString() : "无")
+                    .aphidSpecies(result.has("aphidSpecies") ? result.get("aphidSpecies").getAsString() : null)
+                    .confidence(result.has("confidence") ? result.get("confidence").getAsDouble() : 0.8)
+                    .identificationType(result.has("identificationType") ? result.get("identificationType").getAsString() : "plant")
+                    .pestName(result.has("pestName") ? result.get("pestName").getAsString() : null)
                     .detailedAnalysis(result.has("detailedAnalysis") ? result.get("detailedAnalysis").getAsString() : "")
                     .suggestion(result.has("suggestion") ? result.get("suggestion").getAsString() : "")
                     .modelUsed("qwen3")
@@ -251,6 +261,10 @@ public class AIService {
                         .wormRiskLevel(0)
                         .hasAphid(false)
                         .aphidCount("无")
+                        .aphidSpecies(null)
+                        .confidence(0.5) // 默认置信度
+                        .identificationType("plant") // 默认识别类型
+                        .pestName(null)
                         .detailedAnalysis(resultText)
                         .suggestion("请查看详细分析内容")
                         .modelUsed("qwen3")

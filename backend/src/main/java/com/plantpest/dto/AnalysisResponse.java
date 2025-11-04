@@ -44,6 +44,26 @@ public class AnalysisResponse {
     private String aphidCount;
     
     /**
+     * 蚜虫种类名称
+     */
+    private String aphidSpecies;
+    
+    /**
+     * 识别置信度 (0.0-1.0)
+     */
+    private Double confidence;
+    
+    /**
+     * 识别类型：plant(植物)或pest(害虫)
+     */
+    private String identificationType;
+    
+    /**
+     * 害虫名称（如果识别的是害虫）
+     */
+    private String pestName;
+    
+    /**
      * 详细分析结果
      */
     private String detailedAnalysis;

@@ -99,7 +99,7 @@ public class AnalysisController {
      */
     @GetMapping("/models")
     public ApiResult<String[]> getModels() {
-        return ApiResult.success(new String[]{"qwen3", "gpt4", "claude"});
+        return ApiResult.success(new String[]{"qwen3"});
     }
     
     /**

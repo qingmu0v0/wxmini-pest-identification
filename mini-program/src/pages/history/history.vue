@@ -1,170 +1,239 @@
 <template>
   <view class="container">
-    <view class="header">
-      <text class="title">识别历史</text>
-      <button @click="clearHistory" class="clear-button" :disabled="historyList.length === 0">清空</button>
-    </view>
-
-    <view v-if="historyList.length > 0" class="history-list">
-      <view v-for="(item, index) in historyList" :key="index" class="history-item">
-        <image :src="item.image" mode="aspectFill" class="item-image"></image>
-        <view class="item-details">
-          <text class="item-result">结果: {{ item.result }}</text>
-          <text class="item-model">模型: {{ item.model }}</text>
-          <text class="item-date">时间: {{ formatTime(item.date) }}</text>
+    <wd-card title="识别历史" custom-class="history-card">
+      <view v-if="historyList.length === 0" class="empty-history">
+        <wd-icon name="info-circle" size="40px" color="#999"></wd-icon>
+        <text class="empty-text">暂无识别历史</text>
+      </view>
+      <view v-else class="history-list">
+        <wd-cell v-for="(item, index) in historyList" :key="index" clickable @click="viewResult(item)" custom-class="history-cell">
+          <view class="history-item">
+            <image :src="item.imagePath" mode="aspectFill" class="history-image"></image>
+            <view class="history-content">
+              <text class="history-title">{{ item.analysisResult.plantName || '未知对象' }}</text>
+              <view class="history-subtitle">
+                <wd-tag :type="item.analysisResult.identificationType === 'plant' ? 'success' : 'danger'" size="small">
+                  {{ item.analysisResult.identificationType === 'plant' ? '植物' : '害虫' }}
+                </wd-tag>
+                <text class="confidence-text">置信度: {{ (item.analysisResult.confidence * 100).toFixed(1) }}%</text>
+              </view>
+              <text class="history-time">{{ formatTime(item.timestamp) }}</text>
+            </view>
+          </view>
+        </wd-cell>
+      </view>
+    </wd-card>
+    
+    <view class="footer">
+      <text>青木 © 2025</text>
+      <view class="contact-info">
+        <view class="contact-item" @click="copyEmail">
+          <wd-icon name="mail" size="16px" color="#4caf50"></wd-icon>
+          <text class="email">qingmu0v0@outlook.com</text>
+        </view>
+        <view class="contact-item" @click="openWebsite">
+          <wd-icon name="link" size="16px" color="#4caf50"></wd-icon>
+          <text class="website">qingmu.cloud</text>
         </view>
       </view>
-    </view>
-    <view v-else class="empty-history">
-      <text class="empty-text">暂无识别历史</text>
+      <text class="icp-number">鄂ICP备2025089336号</text>
     </view>
   </view>
 </template>
 
-<script>
-import { STORAGE_KEY } from '@/utils/config';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { onShow, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app';
+import { formatTime } from '../../utils/util'; // 假设有一个util文件用于格式化时间
 
-export default {
-  data() {
-    return {
-      historyList: [],
-    };
-  },
-  onShow() {
-    this.loadHistory();
-  },
-  methods: {
-    loadHistory() {
-      this.historyList = uni.getStorageSync(STORAGE_KEY.HISTORY) || [];
-    },
-    clearHistory() {
-      uni.showModal({
-        title: '确认清空',
-        content: '确定要清空所有历史记录吗？',
-        success: (res) => {
-          if (res.confirm) {
-            uni.removeStorageSync(STORAGE_KEY.HISTORY);
-            this.historyList = [];
+const historyList = ref<any[]>([]);
+
+// uni-app页面生命周期钩子
+onShow(() => {
+  loadHistory();
+});
+
+// 分享功能
+onShareAppMessage(() => {
+  return {
+    title: 'AI植物虫害识别 - 我的识别历史',
+    path: '/pages/index/index',
+    imageUrl: '/static/share-image.png'
+  };
+});
+
+// 分享到朋友圈
+onShareTimeline(() => {
+  return {
+    title: 'AI植物虫害识别 - 精准识别，守护丰收',
+    query: '',
+    imageUrl: '/static/share-image.png'
+  };
+});
+
+const loadHistory = () => {
+  try {
+    const history = uni.getStorageSync('recognitionHistory');
+    historyList.value = history ? JSON.parse(history) : [];
+    // 确保最新的记录在最前面
+    historyList.value.reverse();
+  } catch (e) {
+    console.error('Failed to load recognition history', e);
+  }
+};
+
+const viewResult = (item: any) => {
+  uni.navigateTo({
+    url: '/pages/result/result?image=' + encodeURIComponent(item.imagePath) + '&analysisResult=' + encodeURIComponent(JSON.stringify(item.analysisResult)),
+  });
+};
+
+// 复制邮箱地址
+const copyEmail = () => {
+  uni.setClipboardData({
+    data: 'qingmu0v0@outlook.com',
+    success: () => {
+      uni.showToast({
+        title: '邮箱已复制',
+        icon: 'success',
+        duration: 2000
+      });
+    }
+  });
+};
+
+// 打开官网
+const openWebsite = () => {
+  uni.showModal({
+    title: '提示',
+    content: '即将跳转到青木官网',
+    success: (res) => {
+      if (res.confirm) {
+        // 在小程序中可以使用web-view或者复制链接让用户在浏览器中打开
+        uni.setClipboardData({
+          data: 'https://qingmu.cloud',
+          success: () => {
             uni.showToast({
-              title: '历史记录已清空',
-              icon: 'success'
+              title: '网址已复制，请在浏览器中打开',
+              icon: 'none',
+              duration: 3000
             });
           }
-        },
-      });
-    },
-    formatTime(isoString) {
-      const date = new Date(isoString);
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}`;
-    },
-  },
+        });
+      }
+    }
+  });
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .container {
   display: flex;
   flex-direction: column;
-  padding: 30rpx;
-  min-height: 100vh;
-  background-color: #f0f2f5;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30rpx;
+  padding: 40rpx;
+  background-color: #f7f8fa;
+  min-height: 100vh;
 }
 
-.title {
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.clear-button {
-  background-color: #ff4d4f;
-  color: #fff;
-  font-size: 28rpx;
-  padding: 10rpx 25rpx;
-  border-radius: 40rpx;
-  line-height: 1;
-  height: auto;
-}
-
-.clear-button[disabled] {
-  background-color: #cccccc;
-  color: #999;
+:deep(.history-card) {
+  width: 90%;
+  --wd-card-border-radius: 20rpx;
+  --wd-card-box-shadow: 0 5rpx 15rpx rgba(0, 0, 0, 0.05);
 }
 
 .history-list {
   width: 100%;
 }
 
-.history-item {
-  display: flex;
-  background-color: #fff;
-  border-radius: 16rpx;
-  margin-bottom: 20rpx;
-  padding: 20rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
-  align-items: center;
-}
-
-.item-image {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 12rpx;
-  margin-right: 25rpx;
-  flex-shrink: 0;
-}
-
-.item-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex-grow: 1;
-}
-
-.item-result {
-  font-size: 34rpx;
-  font-weight: bold;
-  color: #333;
+:deep(.history-cell) {
   margin-bottom: 10rpx;
-}
-
-.item-model,
-.item-date {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 5rpx;
-}
-
-.item-date {
-  font-size: 26rpx;
-  color: #999;
+  border-radius: 10rpx;
+  background-color: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
 }
 
 .empty-history {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 400rpx;
-  width: 100%;
-  background-color: #fff;
-  border-radius: 16rpx;
-  margin-top: 50rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  justify-content: center;
+  padding: 60rpx 0;
+  .empty-text {
+    margin-top: 20rpx;
+    font-size: 28rpx;
+    color: #999;
+  }
 }
 
-.empty-text {
-  font-size: 36rpx;
-  color: #999;
+.history-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  .history-image {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 10rpx;
+    margin-right: 20rpx;
+  }
+  .history-content {
+    display: flex;
+    flex-direction: column;
+    .history-title {
+      font-size: 32rpx;
+      font-weight: bold;
+      color: #333;
+    }
+    .history-subtitle {
+      display: flex;
+      align-items: center;
+      margin-top: 8rpx;
+    }
+
+    .confidence-text {
+      margin-left: 16rpx;
+      font-size: 24rpx;
+      color: #666;
+    }
+
+    .history-time {
+      font-size: 24rpx;
+      color: #999;
+      margin-top: 10rpx;
+    }
+  }
 }
+
+.footer {
+    margin-top: 40rpx;
+    font-size: 24rpx;
+    color: #888;
+    text-align: center;
+    width: 100%;
+    
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20rpx;
+      margin-top: 10rpx;
+      
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+        
+        .email, .website {
+          color: #4caf50;
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .icp-number {
+      font-size: 20rpx;
+      color: #999;
+      margin-top: 10rpx;
+    }
+  }
 </style>
