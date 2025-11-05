@@ -32,11 +32,7 @@ bower_components/
 *~
 
 # 上传文件
-uploads/
-*.jpg
-*.jpeg
-*.png
-*.gif
+out/
 
 # 环境配置
 .env
