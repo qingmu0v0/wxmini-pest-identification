@@ -1,0 +1,23 @@
+{
+  "name": "植物病虫害AI识别系统",
+  "short_name": "病虫害识别",
+  "description": "基于深度学习的植物病虫害智能识别系统，帮助农户快速诊断作物问题，提供科学防治建议",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0ea5e9",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait"
+}
