@@ -2,11 +2,10 @@
 const nextConfig = {
   output: 'export',
   images: {
-    domains: ['localhost', 'qingmu.cloud'],
+    domains: ['qingmu.cloud'],
     unoptimized: true,
   },
   env: {
-    CUSTOM_KEY: 'my-value',
   },
 }
 

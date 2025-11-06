@@ -53,3 +53,5 @@ Thumbs.db
 # 微信小程序
 unpackage/
 .hbuilderx/
+yarn.lock
+.gitignore
