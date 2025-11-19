@@ -83,7 +83,7 @@ const Timeline = () => {
   };
 
   return (
-    <section id="timeline" className="py-20 bg-gray-50">
+    <section id="timeline" className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -92,10 +92,10 @@ const Timeline = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             产品发展历程
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             从概念到产品，我们不断创新，致力于为农业生产提供最先进的AI识别技术
           </p>
         </motion.div>
@@ -108,7 +108,7 @@ const Timeline = () => {
           className="relative"
         >
           {/* 时间轴中心线 */}
-          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gray-300"></div>
+          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gray-300 dark:bg-gray-600"></div>
 
           <div className="space-y-12">
             {timelineItems.map((item, index) => (
@@ -120,7 +120,7 @@ const Timeline = () => {
                 }`}
               >
                 {/* 时间轴节点 */}
-                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-white border-4 border-gray-300 z-10 items-center justify-center">
+                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-4 border-gray-300 dark:border-gray-600 z-10 items-center justify-center">
                   <div className={`w-6 h-6 rounded-full ${item.color}`}></div>
                 </div>
 
@@ -128,16 +128,16 @@ const Timeline = () => {
                 <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8'}`}>
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="bg-white p-6 rounded-lg shadow-lg"
+                    className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
                   >
                     <div className="flex items-center mb-4 md:justify-end">
                       <div className={`p-3 rounded-full text-white mr-4`} style={{ backgroundColor: 'rgb(2 132 199 / var(--tw-bg-opacity, 1))' }}>
                         {item.icon}
                       </div>
-                      <span className="text-sm font-semibold text-gray-500">{item.year}</span>
+                      <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{item.year}</span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-gray-600">{item.description}</p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{item.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300">{item.description}</p>
                   </motion.div>
                 </div>
 
@@ -146,7 +146,7 @@ const Timeline = () => {
                   <div className={`w-12 h-12 rounded-full ${item.color} text-white flex items-center justify-center mr-4`}>
                     {item.icon}
                   </div>
-                  <span className="text-sm font-semibold text-gray-500">{item.year}</span>
+                  <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{item.year}</span>
                 </div>
               </motion.div>
             ))}

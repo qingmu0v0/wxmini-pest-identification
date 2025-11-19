@@ -1,75 +1,114 @@
 <template>
   <view class="container">
-    <wd-card custom-class="result-card" v-if="imagePath">
-      <view class="image-display">
-        <image :src="imagePath" mode="aspectFit" class="uploaded-image"></image>
-      </view>
-    </wd-card>
-
-    <wd-card title="识别结果" custom-class="result-card" v-if="analysisResult">
-      <view class="result-item">
-        <text class="label">识别对象：</text>
-        <text class="value">{{ analysisResult.plantName || '未知' }}</text>
-      </view>
-      <view class="result-item">
-        <text class="label">识别类型：</text>
-        <wd-tag :type="analysisResult.identificationType === 'plant' ? 'success' : 'danger'" size="large">
-          {{ analysisResult.identificationType === 'plant' ? '植物' : '害虫' }}
-        </wd-tag>
-      </view>
-      <view class="result-item" v-if="analysisResult.identificationType === 'pest' && analysisResult.pestName">
-        <text class="label">害虫名称：</text>
-        <text class="value">{{ analysisResult.pestName }}</text>
-      </view>
-      <view class="result-item">
-        <text class="label">置信度：</text>
-        <wd-tag :type="getConfidenceTagType(analysisResult.confidence)" size="large">{{ (analysisResult.confidence * 100).toFixed(2) }}%</wd-tag>
-      </view>
-      <view class="result-item" v-if="analysisResult.hasWormDamage !== null">
-        <text class="label">虫蛀风险：</text>
-        <wd-tag :type="getWormRiskTagType(analysisResult.wormRiskLevel)" size="large">{{ getWormRiskText(analysisResult.wormRiskLevel) }}</wd-tag>
-      </view>
-      <view class="result-item" v-if="analysisResult.hasAphid !== null">
-        <text class="label">蚜虫检测：</text>
-        <wd-tag :type="analysisResult.hasAphid ? 'warning' : 'success'" size="large">
-          {{ analysisResult.hasAphid ? '检测到蚜虫' : '未检测到蚜虫' }}
-        </wd-tag>
-      </view>
-      <view class="result-item" v-if="analysisResult.hasAphid && analysisResult.aphidCount">
-        <text class="label">蚜虫数量：</text>
-        <text class="value">{{ analysisResult.aphidCount }}</text>
-      </view>
-      <view class="result-item" v-if="analysisResult.hasAphid && analysisResult.aphidSpecies">
-        <text class="label">蚜虫种类：</text>
-        <text class="value">{{ analysisResult.aphidSpecies }}</text>
-      </view>
-      <view class="result-item">
-        <text class="label">描述：</text>
-        <text class="value">{{ analysisResult.detailedAnalysis || '暂无描述' }}</text>
-      </view>
-      <view class="result-item">
-        <text class="label">建议：</text>
-        <text class="value">{{ analysisResult.suggestion || '暂无建议' }}</text>
-      </view>
-    </wd-card>
-
-    <wd-button type="success" block size="large" custom-class="back-button" @click="goBack">
-      返回首页
-    </wd-button>
-    
-    <view class="footer">
-      <text>青木 © 2025</text>
-      <view class="contact-info">
-        <view class="contact-item" @click="copyEmail">
-          <wd-icon name="mail" size="16px" color="#4caf50"></wd-icon>
-          <text class="email">qingmu0v0@outlook.com</text>
+    <!-- 顶部导航栏 -->
+    <view class="navbar">
+      <view class="navbar-content">
+        <view class="nav-item" @click="goBack">
+          <wd-icon name="arrow-left" size="20px" color="var(--secondary-600)"></wd-icon>
         </view>
-        <view class="contact-item" @click="openWebsite">
-          <wd-icon name="link" size="16px" color="#4caf50"></wd-icon>
-          <text class="website">qingmu.cloud</text>
+        <text class="navbar-title">识别结果</text>
+        <view class="nav-item" @click="shareResult">
+          <wd-icon name="share" size="20px" color="var(--secondary-600)"></wd-icon>
         </view>
       </view>
-      <text class="icp-number">鄂ICP备2025089336号</text>
+    </view>
+
+    <!-- 主要内容区域 -->
+    <view class="main-content">
+      <!-- 图片展示区域 -->
+      <view class="image-section animate-fade-up">
+        <view class="image-container">
+          <image :src="imagePath" mode="aspectFill" class="result-image"></image>
+          <view class="image-overlay">
+            <view class="confidence-badge">
+              <wd-icon name="check-circle" size="16px" color="white"></wd-icon>
+              <text>{{ (analysisResult.confidence * 100).toFixed(1) }}% 置信度</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 识别结果卡片 -->
+      <view class="result-card animate-fade-up animation-delay-200">
+        <view class="result-header">
+          <view class="result-type-badge" :class="analysisResult.identificationType">
+            <text>{{ analysisResult.identificationType === 'plant' ? '植物' : '害虫' }}</text>
+          </view>
+          <text class="result-title">{{ analysisResult.plantName || '未知对象' }}</text>
+        </view>
+
+        <view class="result-content">
+          <!-- 基本信息 -->
+          <view class="info-section">
+            <view class="section-title">
+              <wd-icon name="info-circle" size="18px" color="var(--primary-600)"></wd-icon>
+              <text>基本信息</text>
+            </view>
+            
+            <view class="info-grid">
+              <view class="info-item">
+                <text class="info-label">置信度</text>
+                <text class="info-value">{{ (analysisResult.confidence * 100).toFixed(1) }}%</text>
+              </view>
+              <view class="info-item" v-if="analysisResult.riskLevel">
+                <text class="info-label">风险等级</text>
+                <text class="info-value" :class="getRiskLevelClass(analysisResult.riskLevel)">
+                  {{ analysisResult.riskLevel }}
+                </text>
+              </view>
+              <view class="info-item" v-if="analysisResult.aphidDetected !== undefined">
+                <text class="info-label">蚜虫检测</text>
+                <text class="info-value" :class="analysisResult.aphidDetected ? 'text-danger' : 'text-success'">
+                  {{ analysisResult.aphidDetected ? '是' : '否' }}
+                </text>
+              </view>
+              <view class="info-item" v-if="analysisResult.diseaseType">
+                <text class="info-label">病害类型</text>
+                <text class="info-value">{{ analysisResult.diseaseType }}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 详细描述 -->
+          <view class="description-section" v-if="analysisResult.description">
+            <view class="section-title">
+              <wd-icon name="file-text" size="18px" color="var(--primary-600)"></wd-icon>
+              <text>详细描述</text>
+            </view>
+            <text class="description-text">{{ analysisResult.description }}</text>
+          </view>
+
+          <!-- 处理建议 -->
+          <view class="suggestion-section" v-if="analysisResult.treatmentSuggestions">
+            <view class="section-title">
+              <wd-icon name="lightbulb" size="18px" color="var(--primary-600)"></wd-icon>
+              <text>处理建议</text>
+            </view>
+            <view class="suggestion-list">
+              <view 
+                class="suggestion-item" 
+                v-for="(suggestion, index) in analysisResult.treatmentSuggestions" 
+                :key="index"
+              >
+                <view class="suggestion-number">{{ index + 1 }}</view>
+                <text class="suggestion-text">{{ suggestion }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="action-buttons animate-fade-up animation-delay-400">
+        <button class="btn-secondary" @click="retakePhoto">
+          <wd-icon name="camera" size="18px" color="var(--primary-600)"></wd-icon>
+          <text>重新识别</text>
+        </button>
+        <button class="btn-primary" @click="saveResult">
+          <wd-icon name="bookmark" size="18px" color="white"></wd-icon>
+          <text>保存结果</text>
+        </button>
+      </view>
     </view>
   </view>
 </template>
@@ -113,9 +152,91 @@ onShareTimeline(() => {
   };
 });
 
+// 获取风险等级对应的样式类
+const getRiskLevelClass = (riskLevel: string) => {
+  switch (riskLevel?.toLowerCase()) {
+    case '高':
+      return 'text-danger'
+    case '中':
+      return 'text-warning'
+    case '低':
+      return 'text-success'
+    default:
+      return ''
+  }
+}
+
 const goBack = () => {
   uni.navigateBack();
 };
+
+// 分享结果
+const shareResult = () => {
+  if (!analysisResult.value) return
+  
+  const shareText = `我刚刚识别了${analysisResult.value.identificationType === 'plant' ? '植物' : '害虫'}：${analysisResult.value.plantName}，置信度${(analysisResult.value.confidence * 100).toFixed(1)}%`
+  
+  uni.share({
+    provider: 'weixin',
+    scene: 'WXSceneSession',
+    type: 0,
+    href: '',
+    summary: shareText,
+    success: () => {
+      uni.showToast({
+        title: '分享成功',
+        icon: 'success'
+      })
+    },
+    fail: () => {
+      uni.showToast({
+        title: '分享失败',
+        icon: 'none'
+      })
+    }
+  })
+}
+
+// 重新拍照识别
+const retakePhoto = () => {
+  uni.navigateTo({
+    url: '/pages/index/index'
+  });
+}
+
+// 保存结果
+const saveResult = () => {
+  if (!analysisResult.value || !imagePath.value) return
+  
+  // 获取历史记录
+  const historyData = uni.getStorageSync('identificationHistory') || []
+  
+  // 创建新的历史记录
+  const newRecord = {
+    id: Date.now(),
+    imagePath: imagePath.value,
+    plantName: analysisResult.value.plantName || '未知对象',
+    identificationType: analysisResult.value.identificationType,
+    confidence: analysisResult.value.confidence,
+    riskLevel: analysisResult.value.riskLevel,
+    aphidDetected: analysisResult.value.aphidDetected,
+    diseaseType: analysisResult.value.diseaseType,
+    description: analysisResult.value.description,
+    treatmentSuggestions: analysisResult.value.treatmentSuggestions,
+    createdAt: new Date().toISOString()
+  }
+  
+  // 添加到历史记录
+  historyData.unshift(newRecord)
+  
+  // 保存到本地存储
+  uni.setStorageSync('identificationHistory', historyData)
+  
+  uni.showToast({
+    title: '保存成功',
+    icon: 'success'
+  })
+}
 
 // 复制邮箱地址
 const copyEmail = () => {
@@ -184,86 +305,311 @@ const getWormRiskText = (riskLevel) => {
 
 <style lang="scss" scoped>
 .container {
+  min-height: 100vh;
+  background-color: var(--secondary-50);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 导航栏样式 */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--secondary-200);
+  padding: 0 20rpx;
+  height: 88rpx;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: var(--secondary-100);
+  transition: all 0.3s ease;
+}
+
+.nav-item:active {
+  background-color: var(--secondary-200);
+  transform: scale(0.95);
+}
+
+.navbar-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--secondary-800);
+}
+
+/* 主要内容区域 */
+.main-content {
+  flex: 1;
+  padding-top: 88rpx;
+  padding-bottom: 40rpx;
+  padding-left: 40rpx;
+  padding-right: 40rpx;
+}
+
+/* 图片展示区域 */
+.image-section {
+  margin-bottom: 40rpx;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 500rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.result-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 30rpx;
+}
+
+.confidence-badge {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 10rpx 20rpx;
+  border-radius: 50rpx;
+  align-self: flex-start;
+}
+
+.confidence-badge text {
+  color: white;
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-left: 10rpx;
+}
+
+/* 结果卡片 */
+.result-card {
+  background-color: white;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40rpx;
+}
+
+.result-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40rpx;
-  background-color: #f7f8fa;
-  min-height: 100vh;
-}
-
-:deep(.result-card) {
-  width: 90%;
   margin-bottom: 40rpx;
-  --wd-card-border-radius: 20rpx;
-  --wd-card-box-shadow: 0 5rpx 15rpx rgba(0, 0, 0, 0.05);
-
-  .image-display {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20rpx;
-    .uploaded-image {
-      width: 100%;
-      max-height: 400rpx;
-      border-radius: 10rpx;
-    }
-  }
-
-  .result-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20rpx;
-    font-size: 30rpx;
-    .label {
-      font-weight: bold;
-      color: #333;
-      margin-right: 10rpx;
-    }
-    .value {
-      color: #666;
-      flex: 1;
-    }
-  }
 }
 
-:deep(.back-button) {
-  width: 90%;
-  --wd-button-large-height: 90rpx;
-  --wd-button-border-radius: 50rpx;
+.result-type-badge {
+  padding: 10rpx 24rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+}
+
+.result-type-badge.plant {
+  background-color: var(--success-100);
+  color: var(--success-700);
+}
+
+.result-type-badge.pest {
+  background-color: var(--danger-100);
+  color: var(--danger-700);
+}
+
+.result-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--secondary-800);
+  text-align: center;
+}
+
+/* 信息部分 */
+.result-content {
+  margin-top: 30rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title text {
   font-size: 32rpx;
+  font-weight: 600;
+  color: var(--secondary-800);
+  margin-left: 12rpx;
 }
 
-.footer {
-    margin-top: 40rpx;
-    font-size: 24rpx;
-    color: #888;
-    text-align: center;
-    width: 100%;
-    
-    .contact-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20rpx;
-      margin-top: 10rpx;
-      
-      .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 10rpx;
-        
-        .email, .website {
-          color: #4caf50;
-          text-decoration: underline;
-        }
-      }
-    }
-    
-    .icp-number {
-      font-size: 20rpx;
-      color: #999;
-      margin-top: 10rpx;
-    }
-  }
+.info-section {
+  margin-bottom: 40rpx;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+}
+
+.info-item {
+  background-color: var(--secondary-50);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: var(--secondary-500);
+  margin-bottom: 8rpx;
+}
+
+.info-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--secondary-800);
+}
+
+.text-danger {
+  color: var(--danger-600) !important;
+}
+
+.text-warning {
+  color: var(--warning-600) !important;
+}
+
+.text-success {
+  color: var(--success-600) !important;
+}
+
+/* 描述部分 */
+.description-section {
+  margin-bottom: 40rpx;
+}
+
+.description-text {
+  font-size: 30rpx;
+  line-height: 1.6;
+  color: var(--secondary-700);
+}
+
+/* 建议部分 */
+.suggestion-section {
+  margin-bottom: 40rpx;
+}
+
+.suggestion-list {
+  margin-top: 24rpx;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.suggestion-number {
+  width: 40rpx;
+  height: 40rpx;
+  background-color: var(--primary-600);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.suggestion-text {
+  font-size: 30rpx;
+  line-height: 1.6;
+  color: var(--secondary-700);
+  flex: 1;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 40rpx;
+}
+
+.btn-primary, .btn-secondary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28rpx 0;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-600);
+  color: white;
+}
+
+.btn-primary:active {
+  background-color: var(--primary-700);
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--primary-600);
+  border: 2px solid var(--primary-200);
+}
+
+.btn-secondary:active {
+  background-color: var(--primary-50);
+  transform: scale(0.98);
+}
+
+.btn-primary text, .btn-secondary text {
+  margin-left: 12rpx;
+}
+
+/* 动画效果 */
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
 </style>

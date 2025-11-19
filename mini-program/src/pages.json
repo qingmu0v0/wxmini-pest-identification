@@ -2,7 +2,8 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"^wd-(.*)": "wot-design-uni/components/wd-$1/wd-$1.vue"
+			"^Custom(.*)$": "@/components/Custom$1.vue",
+			"^wd-(.*)$": "wot-design-uni/components/wd-$1/wd-$1.vue"
 		}
 	},
 	"pages": [
@@ -22,12 +23,6 @@
 			"path": "pages/history/history",
 			"style": {
 				"navigationBarTitleText": "识别历史"
-			}
-		},
-		{
-			"path": "pages/about/about",
-			"style": {
-				"navigationBarTitleText": "关于我们"
 			}
 		}
 	],

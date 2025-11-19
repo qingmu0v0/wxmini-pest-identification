@@ -110,7 +110,7 @@ export default function Testimonials() {
   }
 
   return (
-    <section id="testimonials" className="py-20 bg-gray-50">
+    <section id="testimonials" className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -119,11 +119,11 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             用户真实
             <span className="text-gradient">评价与案例</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             超过3000农户和农业企业的选择，听听他们如何使用我们的AI识别系统提高农业生产效率
           </p>
         </motion.div>
@@ -146,7 +146,7 @@ export default function Testimonials() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 activeCategory === category.id
                   ? 'bg-primary-600 text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'
               }`}
             >
               {category.name}
@@ -163,16 +163,16 @@ export default function Testimonials() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 h-full flex flex-col"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 h-full flex flex-col"
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                    <testimonial.avatar className="w-6 h-6 text-primary-600" />
+                  <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mr-3">
+                    <testimonial.avatar className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
-                    <p className="text-xs text-gray-500">{testimonial.location}</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{testimonial.role}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">{testimonial.location}</p>
                   </div>
                 </div>
 
@@ -182,17 +182,17 @@ export default function Testimonials() {
                   ))}
                 </div>
 
-                <p className="text-gray-700 mb-4 flex-grow">{testimonial.content}</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{testimonial.content}</p>
 
-                <div className="border-t pt-3 mt-auto">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-auto">
                   <div className="flex justify-between text-sm">
                     <div>
-                      <span className="text-gray-500">种植作物:</span>
-                      <span className="ml-1 font-medium text-gray-700">{testimonial.crop}</span>
+                      <span className="text-gray-500 dark:text-gray-400">种植作物:</span>
+                      <span className="ml-1 font-medium text-gray-700 dark:text-gray-300">{testimonial.crop}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">效果:</span>
-                      <span className="ml-1 font-medium text-green-600">{testimonial.result}</span>
+                      <span className="text-gray-500 dark:text-gray-400">效果:</span>
+                      <span className="ml-1 font-medium text-green-600 dark:text-green-400">{testimonial.result}</span>
                     </div>
                   </div>
                 </div>
@@ -206,24 +206,24 @@ export default function Testimonials() {
               <button
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
-                className={`absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-200 ${
+                className={`absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-md flex items-center justify-center transition-all duration-200 ${
                   currentIndex === 0 
                     ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:shadow-lg hover:bg-gray-50'
+                    : 'hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
-                <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+                <ChevronLeftIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
               <button
                 onClick={handleNext}
                 disabled={currentIndex >= filteredTestimonials.length - 3}
-                className={`absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-200 ${
+                className={`absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-md flex items-center justify-center transition-all duration-200 ${
                   currentIndex >= filteredTestimonials.length - 3 
                     ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:shadow-lg hover:bg-gray-50'
+                    : 'hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
-                <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+                <ChevronRightIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
             </>
           )}
@@ -235,7 +235,7 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-16 bg-gradient-to-r from-primary-600 to-accent-600 rounded-2xl p-8 md:p-12 text-white"
+          className="mt-16 bg-gradient-to-r from-primary-600 to-accent-600 dark:from-primary-700 dark:to-accent-700 rounded-2xl p-8 md:p-12 text-white"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>

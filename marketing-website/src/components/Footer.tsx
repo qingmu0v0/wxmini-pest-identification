@@ -12,27 +12,91 @@ import {
   UserGroupIcon
 } from '@heroicons/react/24/outline'
 import { ChevronUpIcon } from '@heroicons/react/24/solid'
+import { submitContactForm, subscribeToNewsletter } from '../api/contact'
+import { useCookieConsent } from './CookieBanner'
 
 const Footer = () => {
+  const { setShowSettings } = useCookieConsent();
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isMessageSent, setIsMessageSent] = useState(false)
+  const [subscriptionError, setSubscriptionError] = useState('')
+  const [messageError, setMessageError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // 联系表单状态
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  })
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 这里可以添加订阅逻辑
-    setIsSubscribed(true)
-    setTimeout(() => setIsSubscribed(false), 3000)
-    setEmail('')
+    if (!email) return
+    
+    setIsSubmitting(true)
+    setSubscriptionError('')
+    
+    try {
+      const result = await subscribeToNewsletter(email)
+      if (result.success) {
+        setIsSubscribed(true)
+        setEmail('')
+        setTimeout(() => setIsSubscribed(false), 5000)
+      } else {
+        setSubscriptionError(result.error || '订阅失败，请稍后再试')
+      }
+    } catch (error) {
+      setSubscriptionError('订阅失败，请稍后再试')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleMessageSubmit = (e: React.FormEvent) => {
+  const handleMessageSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 这里可以添加消息提交逻辑
-    setIsMessageSent(true)
-    setTimeout(() => setIsMessageSent(false), 3000)
-    setMessage('')
+    
+    // 验证表单
+    if (!contactForm.name || !contactForm.email || !contactForm.subject || !contactForm.message) {
+      setMessageError('请填写所有必填字段')
+      return
+    }
+    
+    setIsSubmitting(true)
+    setMessageError('')
+    
+    try {
+      const result = await submitContactForm(contactForm)
+      if (result.success) {
+        setIsMessageSent(true)
+        setContactForm({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        })
+        setTimeout(() => setIsMessageSent(false), 5000)
+      } else {
+        setMessageError(result.error || '发送失败，请稍后再试')
+      }
+    } catch (error) {
+      setMessageError('发送失败，请稍后再试')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleContactFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setContactForm(prev => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
   const scrollToTop = () => {
@@ -40,7 +104,7 @@ const Footer = () => {
   }
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 dark:bg-black text-white">
       {/* 主要页脚内容 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -156,7 +220,7 @@ const Footer = () => {
             </motion.div>
           </div>
 
-          {/* 订阅 */}
+          {/* Discord交流群 */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -164,175 +228,42 @@ const Footer = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h4 className="text-lg font-semibold mb-4">订阅我们</h4>
-              <p className="text-gray-300 mb-4">
-                获取最新的产品更新和农业技术资讯
-              </p>
-              <form onSubmit={handleSubscribe} className="space-y-3">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="您的邮箱地址"
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                  required
+              <h4 className="text-lg font-semibold mb-4">Discord交流群</h4>
+              <div className="bg-gray-800 dark:bg-gray-900 rounded-lg p-4 text-center">
+                <img 
+                  src="/images/discord-qr-placeholder.jpg" 
+                  alt="Discord群组二维码" 
+                  className="mx-auto mb-3 w-32 h-32"
                 />
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 text-white rounded-md hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-                  style={{ backgroundColor: 'rgb(2 132 199 / var(--tw-bg-opacity, 1))' }}
-                >
-                  订阅
-                </button>
-              </form>
-              {isSubscribed && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-2 text-blue-400 text-sm"
-                >
-                  订阅成功！感谢您的关注。
-                </motion.div>
-              )}
+                <p className="text-gray-300 text-sm mb-3">扫码加入Discord交流群</p>
+                <p className="text-gray-400 text-xs">
+                  与其他用户和开发团队进行实时交流
+                </p>
+              </div>
             </motion.div>
           </div>
+
+
         </div>
       </div>
 
-      {/* 快速联系表单 */}
-      <div id="contact" className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-8"
-          >
-            <h3 className="text-2xl font-bold mb-4">快速联系我们</h3>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              有任何问题或建议？请填写下面的表单，我们会尽快回复您。
-            </p>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="max-w-3xl mx-auto"
-          >
-            <form onSubmit={handleMessageSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                  姓名
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                  placeholder="您的姓名"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="email-contact" className="block text-sm font-medium text-gray-300 mb-2">
-                  邮箱
-                </label>
-                <input
-                  type="email"
-                  id="email-contact"
-                  name="email"
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                  placeholder="您的邮箱地址"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
-                  电话
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                  placeholder="您的联系电话"
-                />
-              </div>
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
-                  主题
-                </label>
-                <select
-                  id="subject"
-                  name="subject"
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
-                  required
-                >
-                  <option value="">请选择主题</option>
-                  <option value="product">产品咨询</option>
-                  <option value="technical">技术支持</option>
-                  <option value="cooperation">商务合作</option>
-                  <option value="feedback">意见反馈</option>
-                  <option value="other">其他</option>
-                </select>
-              </div>
-              <div className="md:col-span-2">
-                <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
-                  留言
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                  placeholder="请输入您的留言内容..."
-                  required
-                ></textarea>
-              </div>
-              <div className="md:col-span-2">
-                <button
-                   type="submit"
-                   className="w-full md:w-auto px-8 py-3 text-white font-medium rounded-md hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 flex items-center justify-center"
-                   style={{ backgroundColor: 'rgb(2 132 199 / var(--tw-bg-opacity, 1))' }}
-                 >
-                   <PaperAirplaneIcon className="h-5 w-5 mr-2" />
-                   发送消息
-                 </button>
-              </div>
-            </form>
-            {isMessageSent && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-4 bg-blue-900 bg-opacity-50 border border-blue-700 rounded-md text-blue-400"
-              >
-                消息已发送！我们会尽快回复您。
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
-      </div>
 
       {/* 版权信息 */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-gray-800 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
               © 2025 植物虫害AI识别. 保留所有权利. 鄂ICP备2025089336号
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <a href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
                 隐私政策
               </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <a href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
                 服务条款
               </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <a href="#" onClick={(e) => { e.preventDefault(); setShowSettings(true); }} className="text-gray-400 hover:text-white text-sm transition-colors">
                 Cookie设置
               </a>
             </div>

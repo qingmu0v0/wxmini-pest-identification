@@ -1,43 +1,104 @@
 <template>
-  <view class="container">
-    <view class="header">
-      <!-- New Animated Logo -->
-      <view class="logo-container">
-        <image class="logo-image" src="/static/AI.png" mode="aspectFit"></image>
+  <view class="container hero-gradient">
+    <!-- 顶部导航栏 -->
+    <view class="navbar">
+      <view class="navbar-content">
+        <view class="logo-container">
+          <image class="logo-image" src="/static/logo.png" mode="aspectFit"></image>
+          <text class="logo-text">植物虫害AI识别</text>
+        </view>
+        <view class="nav-actions">
+          <view class="nav-item" @click="goToHistory">
+            <wd-icon name="history" size="20px" color="var(--secondary-600)"></wd-icon>
+          </view>
+        </view>
       </view>
-      <text class="title">AI植物虫害识别</text>
-      <text class="subtitle" :key="currentSubtitle">{{ currentSubtitle }}</text>
     </view>
 
-    <wd-card title="开始识别" custom-class="main-card">
-      <view class="card-content">
-        <wd-icon name="camera" size="50px" color="#4caf50"></wd-icon>
-        <text class="upload-text">请上传或拍摄一张清晰的害虫照片</text>
+    <!-- 主要内容区域 -->
+    <view class="main-content">
+      <!-- 标题区域 -->
+      <view class="hero-section animate-fade-up">
+        <view class="badge">
+          <wd-icon name="sparkles" size="16px" color="var(--primary-600)"></wd-icon>
+          <text class="badge-text">基于深度学习的智能识别技术</text>
+        </view>
+        
+        <view class="title-container">
+          <text class="title-main">植物虫害</text>
+          <text class="title-accent">AI智能识别</text>
+        </view>
+        
+        <text class="subtitle">{{ currentSubtitle }}</text>
       </view>
-      <wd-button type="success" block size="large" custom-class="scan-button" @click="startScan">
-        拍照识别
-      </wd-button>
-    </wd-card>
 
-    <wd-grid :column="2" clickable custom-class="menu-grid">
-      <view @click="goToHistory">
-        <wd-grid-item icon="history" text="识别历史" />
+      <!-- 数据展示区域 -->
+      <view class="stats-container animate-fade-up animation-delay-200">
+        <view class="stat-item">
+          <text class="stat-value">99.2%</text>
+          <text class="stat-label">识别准确率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">200+</text>
+          <text class="stat-label">病虫害种类</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">15s</text>
+          <text class="stat-label">识别速度</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">1万+</text>
+          <text class="stat-label">用户信赖</text>
+        </view>
       </view>
-      <view @click="goToAbout">
-        <wd-grid-item icon="info-circle" text="关于我们" />
-      </view>
-    </wd-grid>
 
+      <!-- 主要功能卡片 -->
+      <view class="feature-card animate-scale-in animation-delay-400">
+        <view class="feature-header">
+          <view class="feature-icon">
+            <wd-icon name="camera" size="32px" color="white"></wd-icon>
+          </view>
+          <text class="feature-title">开始识别</text>
+        </view>
+        <text class="feature-desc">请上传或拍摄一张清晰的害虫照片</text>
+        <view class="feature-action">
+          <button class="btn-primary" @click="startScan">
+            <wd-icon name="camera" size="18px" color="white"></wd-icon>
+            <text>拍照识别</text>
+          </button>
+        </view>
+      </view>
+
+      <!-- 功能网格 -->
+      <view class="function-grid animate-fade-up animation-delay-600">
+        <view class="function-item" @click="goToHistory">
+          <view class="function-icon-container" style="background-color: var(--accent-100);">
+            <wd-icon name="history" size="24px" color="var(--accent-600)"></wd-icon>
+          </view>
+          <text class="function-title">识别历史</text>
+          <text class="function-desc">查看历史识别记录</text>
+        </view>
+        <view class="function-item" @click="goToAbout">
+          <view class="function-icon-container" style="background-color: var(--primary-100);">
+            <wd-icon name="info-circle" size="24px" color="var(--primary-600)"></wd-icon>
+          </view>
+          <text class="function-title">关于我们</text>
+          <text class="function-desc">了解更多信息</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部信息 -->
     <view class="footer">
-      <text>青木 © 2025</text>
+      <text class="footer-text">青木 © 2025</text>
       <view class="contact-info">
         <view class="contact-item" @click="copyEmail">
-          <wd-icon name="mail" size="16px" color="#4caf50"></wd-icon>
-          <text class="email">qingmu0v0@outlook.com</text>
+          <wd-icon name="mail" size="16px" color="var(--primary-600)"></wd-icon>
+          <text class="contact-text">qingmu0v0@outlook.com</text>
         </view>
         <view class="contact-item" @click="openWebsite">
-          <wd-icon name="link" size="16px" color="#4caf50"></wd-icon>
-          <text class="website">qingmu.cloud</text>
+          <wd-icon name="link" size="16px" color="var(--primary-600)"></wd-icon>
+          <text class="contact-text">qingmu.cloud</text>
         </view>
       </view>
       <text class="icp-number">鄂ICP备2025089336号</text>
@@ -180,179 +241,391 @@ const openWebsite = () => {
 
 <style lang="scss" scoped>
 .container {
+  min-height: 100vh;
+  background: var(--secondary-50);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-gradient {
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--primary-100) 0%, transparent 70%);
+    opacity: 0.5;
+    z-index: 0;
+    animation: float 20s ease-in-out infinite;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -30%;
+    width: 160%;
+    height: 160%;
+    background: radial-gradient(circle, var(--accent-100) 0%, transparent 70%);
+    opacity: 0.4;
+    z-index: 0;
+    animation: float 25s ease-in-out infinite reverse;
+  }
+}
+
+.navbar {
+  position: relative;
+  z-index: 10;
+  padding: var(--spacing-4) 0;
+  
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacing-5);
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      
+      .logo-image {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+      }
+      
+      .logo-text {
+        font-size: var(--text-xl);
+        font-weight: var(--font-bold);
+        color: var(--secondary-800);
+      }
+    }
+    
+    .nav-actions {
+      display: flex;
+      gap: var(--spacing-3);
+      
+      .nav-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-base);
+        
+        &:active {
+          transform: scale(0.95);
+          background-color: var(--secondary-100);
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  position: relative;
+  z-index: 5;
+  padding: var(--spacing-6) var(--spacing-5);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding: 20rpx;
-  box-sizing: border-box;
-  background: linear-gradient(135deg, #e0f2e0, #f5fff5, #e6f7ff);
-  background-size: 400% 400%;
-  animation: backgroundAnimation 15s ease infinite;
+  gap: var(--spacing-8);
 }
 
-@keyframes backgroundAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.hero-section {
+  text-align: center;
+  margin-bottom: var(--spacing-4);
+  
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    background-color: var(--primary-50);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-full);
+    padding: var(--spacing-2) var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+    
+    .badge-text {
+      font-size: var(--text-sm);
+      color: var(--primary-700);
+      font-weight: var(--font-medium);
+    }
+  }
+  
+  .title-container {
+    margin-bottom: var(--spacing-4);
+    
+    .title-main {
+      display: block;
+      font-size: 48px;
+      font-weight: var(--font-bold);
+      color: var(--secondary-900);
+      line-height: 1.1;
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .title-accent {
+      display: block;
+      font-size: 48px;
+      font-weight: var(--font-bold);
+      background: linear-gradient(to right, var(--primary-600), var(--accent-600));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.1;
+    }
+  }
+  
+  .subtitle {
+    font-size: var(--text-lg);
+    color: var(--secondary-600);
+    line-height: 1.6;
+    max-width: 80%;
+    margin: 0 auto;
+  }
 }
 
-.header, .main-card, .menu-grid {
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-6);
+  
+  .stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-4);
+    background-color: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin: 0 var(--spacing-1);
+    
+    .stat-value {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-bold);
+      color: var(--primary-600);
+      margin-bottom: var(--spacing-1);
+    }
+    
+    .stat-label {
+      font-size: var(--text-sm);
+      color: var(--secondary-600);
+    }
+  }
+}
+
+.feature-card {
+  background-color: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-6);
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+  
+  .feature-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-3);
+    }
+    
+    .feature-title {
+      font-size: var(--text-xl);
+      font-weight: var(--font-bold);
+      color: var(--secondary-800);
+    }
+  }
+  
+  .feature-desc {
+    font-size: var(--text-base);
+    color: var(--secondary-600);
+    margin-bottom: var(--spacing-5);
+    line-height: 1.5;
+  }
+  
+  .feature-action {
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      background: linear-gradient(to right, var(--primary-500), var(--primary-600));
+      color: white;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-3) var(--spacing-6);
+      font-size: var(--text-base);
+      font-weight: var(--font-medium);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      
+      &:active {
+        transform: translateY(2px);
+        box-shadow: var(--shadow-sm);
+      }
+    }
+  }
+}
+
+.function-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+  
+  .function-item {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-5);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all var(--transition-base);
+    
+    &:active {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .function-icon-container {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-3);
+    }
+    
+    .function-title {
+      font-size: var(--text-base);
+      font-weight: var(--font-medium);
+      color: var(--secondary-800);
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .function-desc {
+      font-size: var(--text-sm);
+      color: var(--secondary-600);
+      line-height: 1.4;
+    }
+  }
+}
+
+.footer {
+  position: relative;
+  z-index: 5;
+  padding: var(--spacing-6) var(--spacing-5);
+  text-align: center;
+  margin-top: auto;
+  
+  .footer-text {
+    font-size: var(--text-sm);
+    color: var(--secondary-600);
+    margin-bottom: var(--spacing-3);
+    display: block;
+  }
+  
+  .contact-info {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-3);
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      
+      .contact-text {
+        font-size: var(--text-sm);
+        color: var(--secondary-600);
+      }
+    }
+  }
+  
+  .icp-number {
+    font-size: var(--text-xs);
+    color: var(--secondary-500);
+    display: block;
+  }
+}
+
+// 动画类
+.animate-fade-up {
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
 }
 
-.main-card {
+.animation-delay-200 {
   animation-delay: 0.2s;
 }
 
-.menu-grid {
+.animation-delay-400 {
   animation-delay: 0.4s;
 }
 
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+// 动画定义
 @keyframes fadeInUp {
   from {
-    transform: translateY(30rpx);
     opacity: 0;
+    transform: translateY(30px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.header {
-  text-align: center;
-  margin-top: 80rpx;
-  margin-bottom: 60rpx;
-
-  .logo-container {
-    width: 150rpx;
-    height: 150rpx;
-    margin: 0 auto 20rpx;
-    animation: float 4s ease-in-out infinite;
-    .logo-image {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1);
-    }
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0);
+    transform: translate(0, 0) rotate(0deg);
   }
-  50% {
-    transform: translateY(-15rpx);
+  33% {
+    transform: translate(30px, -30px) rotate(120deg);
   }
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.subtitle {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-top: 10rpx;
-  height: 40rpx;
-  display: block; /* Changed from inline-block to block */
-  background: linear-gradient(45deg, #4caf50, #2196f3, #f44336, #ffeb3b);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 400% 400%;
-  animation: gradientAnimation 6s ease infinite, fadeInOut 3s ease-in-out infinite;
-}
-
-@keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes fadeInOut {
-  0%, 90%, 100% {
-    opacity: 0;
-    transform: translateY(10rpx);
-  }
-  10%, 80% {
-    opacity: 1;
-    transform: translateY(0);
+  66% {
+    transform: translate(-20px, 20px) rotate(240deg);
   }
 }
-
-:deep(.main-card) {
-  width: 90%;
-  margin-bottom: 80rpx; /* 增加底部边距，提供更多空白 */
-  --wd-card-border-radius: 40rpx;
-  --wd-card-box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.05);
-  .card-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40rpx 0;
-    .upload-text {
-      font-size: 26rpx;
-      color: #666;
-      margin-top: 20rpx;
-    }
-  }
-  .scan-button {
-    margin-top: 20rpx;
-    margin-bottom: 20rpx; /* 增加按钮底部边距 */
-    --wd-button-large-height: 90rpx;
-    --wd-button-border-radius: 50rpx;
-    font-size: 32rpx;
-  }
-}
-
-:deep(.menu-grid) {
-  width: 90%;
-  --wd-grid-item-content-padding: 30rpx 16rpx;
-  --wd-grid-item-icon-size: 50rpx;
-  --wd-grid-item-text-font-size: 26rpx;
-  --wd-grid-item-text-margin-top: 16rpx;
-  --wd-grid-item-bg-color: rgba(255, 255, 255, 0.7);
-  --wd-grid-item-border-radius: 20rpx;
-}
-
-.footer {
-    position: absolute;
-    bottom: 40rpx;
-    font-size: 24rpx;
-    color: #888;
-    text-align: center;
-    width: 100%;
-    
-    .contact-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20rpx;
-      margin-top: 10rpx;
-      
-      .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 10rpx;
-        
-        .email, .website {
-          color: #4caf50;
-          text-decoration: underline;
-        }
-      }
-    }
-    
-    .icp-number {
-      font-size: 20rpx;
-      color: #999;
-      margin-top: 10rpx;
-    }
-  }
 </style>
