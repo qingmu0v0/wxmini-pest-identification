@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 // API基础URL - 在生产环境中应该从环境变量获取
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
@@ -46,9 +46,10 @@ export const submitContactForm = async (formData: {
     return { success: true, data: response.data }
   } catch (error) {
     console.error('Contact form submission error:', error)
+    const axiosError = error as AxiosError
     return { 
       success: false, 
-      error: error.response?.data?.message || '提交失败，请稍后再试' 
+      error: (axiosError.response?.data as any)?.message || '提交失败，请稍后再试' 
     }
   }
 }
@@ -60,9 +61,10 @@ export const subscribeToNewsletter = async (email: string) => {
     return { success: true, data: response.data }
   } catch (error) {
     console.error('Newsletter subscription error:', error)
+    const axiosError = error as AxiosError
     return { 
       success: false, 
-      error: error.response?.data?.message || '订阅失败，请稍后再试' 
+      error: (axiosError.response?.data as any)?.message || '订阅失败，请稍后再试' 
     }
   }
 }
@@ -74,9 +76,10 @@ export const getProductInfo = async () => {
     return { success: true, data: response.data }
   } catch (error) {
     console.error('Get product info error:', error)
+    const axiosError = error as AxiosError
     return { 
       success: false, 
-      error: error.response?.data?.message || '获取产品信息失败' 
+      error: (axiosError.response?.data as any)?.message || '获取产品信息失败' 
     }
   }
 }
