@@ -107,7 +107,7 @@ const Footer = () => {
     <footer className="bg-gray-900 dark:bg-black text-white">
       {/* 主要页脚内容 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* 公司信息 */}
           <div className="lg:col-span-1">
             <motion.div
@@ -219,31 +219,6 @@ const Footer = () => {
               </ul>
             </motion.div>
           </div>
-
-          {/* Discord交流群 */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <h4 className="text-lg font-semibold mb-4">Discord交流群</h4>
-              <div className="bg-gray-800 dark:bg-gray-900 rounded-lg p-4 text-center">
-                <img 
-                  src="/images/discord-qr-placeholder.jpg" 
-                  alt="Discord群组二维码" 
-                  className="mx-auto mb-3 w-32 h-32"
-                />
-                <p className="text-gray-300 text-sm mb-3">扫码加入Discord交流群</p>
-                <p className="text-gray-400 text-xs">
-                  与其他用户和开发团队进行实时交流
-                </p>
-              </div>
-            </motion.div>
-          </div>
-
-
         </div>
       </div>
 

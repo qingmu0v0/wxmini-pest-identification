@@ -2,7 +2,12 @@
 const nextConfig = {
   output: 'export',
   images: {
-    domains: ['qingmu.cloud'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'qingmu.cloud',
+      },
+    ],
     unoptimized: true,
   },
   env: {

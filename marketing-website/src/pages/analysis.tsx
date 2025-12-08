@@ -211,84 +211,57 @@ export default function Analysis() {
                     </div>
                   </div>
 
-                  {/* 虫害风险评估 */}
-                  <div className={`p-6 rounded-lg border ${
-                    result.wormRiskLevel >= 3 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 
-                    result.wormRiskLevel >= 2 ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : 
-                    'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                  }`}>
-                    <h3 className="text-lg font-semibold dark:text-gray-200 mb-3">虫害风险评估</h3>
-                    <div className="flex items-center mb-3">
-                      <div className={`w-4 h-4 rounded-full mr-2 ${
-                        result.wormRiskLevel >= 3 ? 'bg-red-500' : 
-                        result.wormRiskLevel >= 2 ? 'bg-yellow-500' : 
-                        'bg-green-500'
-                      }`}></div>
-                      <span className="font-medium dark:text-gray-200">
-                        {result.wormRiskLevel >= 3 ? '高风险' : 
-                         result.wormRiskLevel >= 2 ? '中等风险' : 
-                         '低风险'}
-                      </span>
-                      <span className="ml-2 text-gray-600 dark:text-gray-400">({result.wormRiskLevel}/5)</span>
-                    </div>
-                    <div className="mb-3">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">虫蛀损伤</p>
-                      <p className="font-medium dark:text-gray-200">{result.hasWormDamage ? '检测到虫蛀损伤' : '未检测到虫蛀损伤'}</p>
-                    </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      {result.wormRiskLevel >= 3 ? '检测到严重虫害，建议立即采取防治措施' : 
-                       result.wormRiskLevel >= 2 ? '存在一定虫害风险，建议密切观察并采取预防措施' : 
-                       '虫害风险较低，继续保持良好的种植管理'}
-                    </p>
-                  </div>
-
-                  {/* 害虫识别 */}
-                  {result.identificationType === 'pest' && result.pestName && (
-                    <div className="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-lg border border-orange-200 dark:border-orange-800">
-                      <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-300 mb-3">害虫识别</h3>
-                      <div className="mb-3">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">害虫名称</p>
-                        <p className="font-medium text-lg dark:text-gray-200">{result.pestName}</p>
-                      </div>
-                      <div className="mb-3">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">置信度</p>
-                        <div className="flex items-center">
-                          <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 mr-2">
-                            <div 
-                              className="bg-orange-600 h-2.5 rounded-full" 
-                              style={{ width: `${(result.confidence || 0) * 100}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm dark:text-gray-300">{Math.round((result.confidence || 0) * 100)}%</span>
+                  {/* 检测结果 (合并害虫、蚜虫、虫蛀) */}
+                  {(result.detectedPests?.length > 0 || result.hasAphid || result.hasWormDamage) && (
+                    <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg border border-red-200 dark:border-red-800">
+                      <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        检测结果
+                      </h3>
+                      
+                      {/* 害虫标签列表 */}
+                      {result.detectedPests && result.detectedPests.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {result.detectedPests.map((pest: string, index: number) => (
+                            <span key={index} className="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full dark:bg-red-900 dark:text-red-300 border border-red-200 dark:border-red-800">
+                              {pest}
+                            </span>
+                          ))}
                         </div>
+                      )}
+
+                      <div className="space-y-3 text-gray-700 dark:text-gray-300">
+                        {/* 蚜虫详情 */}
+                        {result.hasAphid && (
+                          <div className="flex items-start">
+                            <span className="font-medium min-w-[80px]">蚜虫详情：</span>
+                            <span>
+                              检测到蚜虫
+                              {result.aphidCount && ` (数量: ${result.aphidCount})`}
+                              {result.aphidSpecies && ` (种类: ${result.aphidSpecies})`}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* 虫蛀详情 */}
+                        {result.hasWormDamage && (
+                          <div className="flex items-start">
+                            <span className="font-medium min-w-[80px]">虫蛀情况：</span>
+                            <span>
+                              检测到虫蛀痕迹 (风险等级: {result.wormRiskLevel}/3)
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* 如果没有具体详情但有检测结果 */}
+                        {!result.hasAphid && !result.hasWormDamage && (!result.detectedPests || result.detectedPests.length === 0) && (
+                           <p>检测到异常情况，但未识别出具体种类。</p>
+                        )}
                       </div>
                     </div>
                   )}
-
-                  {/* 蚜虫检测 */}
-                  <div className={`p-6 rounded-lg border ${
-                    result.hasAphid ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-                  }`}>
-                    <h3 className="text-lg font-semibold dark:text-gray-200 mb-3">蚜虫检测</h3>
-                    <div className="flex items-center mb-3">
-                      <div className={`w-4 h-4 rounded-full mr-2 ${
-                        result.hasAphid ? 'bg-purple-500' : 'bg-gray-400 dark:bg-gray-500'
-                      }`}></div>
-                      <span className="font-medium dark:text-gray-200">
-                        {result.hasAphid ? '检测到蚜虫' : '未检测到蚜虫'}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">蚜虫数量</p>
-                        <p className="font-medium dark:text-gray-200">{result.aphidCount || '无'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">蚜虫种类</p>
-                        <p className="font-medium dark:text-gray-200">{result.aphidSpecies || '无'}</p>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* 详细分析 */}
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
