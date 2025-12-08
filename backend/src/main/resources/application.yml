@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  # 默认激活的profile
+  profiles:
+    active: master
+  
+  application:
+    name: plant-pest-analysis
+  
+  # HTTP消息转换器配置
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  
+  # 数据库配置（根据实际情况修改）
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.93.147.90:3306/plant_pest?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: M22/B6!DxoDw
+  
+  # MyBatis Plus配置
+  mybatis-plus:
+    configuration:
+      map-underscore-to-camel-case: true
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    global-config:
+      db-config:
+        logic-delete-field: deleted
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+
+# 文件存储配置
+file:
+  upload-dir: ./uploads
+  
+# AI模型配置
+ai:
+  # 默认使用的模型
+  default-model: qwen3
+  
+  # QWEN3配置（通义千问）
+  qwen3:
+    enabled: true
+    api-key: sk-6873d82a6bcf4abd9619c6c1fdb5cf3a
+    # endpoint: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation  # SDK自动处理
+    model: qwen-vl-plus
+  
+  # GPT-4 Vision配置（可选）
+  gpt4:
+    enabled: false
+    api-key: ${OPENAI_API_KEY:your-openai-api-key}
+    endpoint: https://api.openai.com/v1/chat/completions
+    model: gpt-4-vision-preview
+  
+  # Claude配置（可选）
+  claude:
+    enabled: false
+    api-key: ${CLAUDE_API_KEY:your-claude-api-key}
+    endpoint: https://api.anthropic.com/v1/messages
+    model: claude-3-opus-20240229
+
+# 跨域配置
+cors:
+  allowed-origins: "http://localhost:8081,http://localhost:8082"
+  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"

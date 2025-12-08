@@ -176,21 +176,23 @@ public class AIService {
         return """
                 请分析这张植物图片，重点识别以下内容：
                 1. 植物名称或类型
-                2. 是否存在虫蛀痕迹，评估虫蛀风险等级（0-无风险，1-低风险，2-中风险，3-高风险）
-                3. 是否检测到蚜虫，如有请估计数量（少量/中等/大量）并识别蚜虫种类
-                4. 识别图片中的主要对象是植物还是害虫
-                5. 提供详细的病虫害分析
-                6. 给出防治建议
-                7. 评估识别的置信度（0.0-1.0）
+                2. 识别图中所有的害虫或病害（包括蚜虫、虫蛀、真菌等），请列出具体的害虫/病害种类名称
+                3. 如果是蚜虫，请特别标注蚜虫种类和数量（少量/中等/大量）
+                4. 评估虫蛀/病害的风险等级（0-无风险，1-低风险，2-中风险，3-高风险）
+                5. 识别图片中的主要对象是植物还是害虫
+                6. 提供详细的病虫害分析
+                7. 给出具体的防治建议
+                8. 评估识别的置信度（0.0-1.0）
                 
                 请以JSON格式返回结果：
                 {
                   "plantName": "植物名称",
+                  "detectedPests": ["害虫/病害名称1", "害虫/病害名称2"],
                   "hasWormDamage": true/false,
                   "wormRiskLevel": 0-3,
                   "hasAphid": true/false,
                   "aphidCount": "少量/中等/大量/无",
-                  "aphidSpecies": "蚜虫种类名称（如棉蚜、桃蚜等）",
+                  "aphidSpecies": "蚜虫种类名称",
                   "confidence": 0.95,
                   "identificationType": "plant或pest",
                   "pestName": "害虫名称（如果识别的是害虫）",
@@ -224,9 +226,19 @@ public class AIService {
             // 尝试直接解析JSON
             JsonObject result = gson.fromJson(actualText, JsonObject.class);
             
+            // 解析检测到的害虫列表
+            java.util.List<String> detectedPests = new java.util.ArrayList<>();
+            if (result.has("detectedPests")) {
+                JsonArray pestsArray = result.get("detectedPests").getAsJsonArray();
+                for (com.google.gson.JsonElement pest : pestsArray) {
+                    detectedPests.add(pest.getAsString());
+                }
+            }
+
             return AnalysisResponse.builder()
                     .success(true)
                     .plantName(result.has("plantName") ? result.get("plantName").getAsString() : "未识别")
+                    .detectedPests(detectedPests)
                     .hasWormDamage(result.has("hasWormDamage") ? result.get("hasWormDamage").getAsBoolean() : false)
                     .wormRiskLevel(result.has("wormRiskLevel") ? result.get("wormRiskLevel").getAsInt() : 0)
                     .hasAphid(result.has("hasAphid") ? result.get("hasAphid").getAsBoolean() : false)

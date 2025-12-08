@@ -74,7 +74,7 @@
           </view>
           <view class="stat-divider"></view>
           <view class="stat-item">
-            <text class="stat-num">6s内</text>
+            <text class="stat-num">较快</text>
             <text class="stat-label">识别速度</text>
           </view>
         </view>

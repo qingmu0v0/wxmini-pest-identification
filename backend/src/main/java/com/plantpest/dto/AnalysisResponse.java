@@ -82,4 +82,9 @@ public class AnalysisResponse {
      * 错误信息
      */
     private String errorMessage;
+
+    /**
+     * 检测到的害虫/病害列表
+     */
+    private java.util.List<String> detectedPests;
 }

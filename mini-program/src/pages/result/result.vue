@@ -94,7 +94,7 @@
           
           <view class="info-card">
             <view class="info-block">
-              <text class="block-content">{{ analysisResult.detailedAnalysis }}</text>
+              <text class="block-content">{{ displayedDetailedAnalysis }}</text>
             </view>
           </view>
         </view>
@@ -179,6 +179,30 @@ const formattedSuggestions = computed(() => {
     .map((s: string) => s.trim())
     .filter((s: string) => s.length > 0)
     .map((s: string) => s.replace(/^\d+\.\s*/, '')); // Remove "1. " prefix if present
+});
+
+const displayedDetailedAnalysis = computed(() => {
+  if (!analysisResult.value?.detailedAnalysis) return '';
+  
+  const analysis = analysisResult.value.detailedAnalysis;
+  
+  // Handle nested JSON string case
+  if (typeof analysis === 'string') {
+    const trimmed = analysis.trim();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        // If parsed successfully and has content/description fields, use them
+        if (typeof parsed === 'object' && parsed !== null) {
+          return parsed.content || parsed.description || parsed.detailedAnalysis || analysis;
+        }
+      } catch (e) {
+        // Parse error, treat as plain string
+      }
+    }
+  }
+  
+  return analysis;
 });
 
 const isHealthy = computed(() => {
@@ -703,7 +727,7 @@ const saveResult = () => {
   left: 0;
   width: 100%;
   background: white;
-  padding: var(--spacing-3) var(--spacing-6);
+  padding: var(--spacing-3) var(--spacing-8);
   padding-bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom));
   display: flex;
   justify-content: space-between;
