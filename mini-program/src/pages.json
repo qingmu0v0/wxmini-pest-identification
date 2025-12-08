@@ -16,13 +16,28 @@
 		{
 			"path": "pages/result/result",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "识别结果"
 			}
 		},
 		{
 			"path": "pages/history/history",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "识别历史"
+			}
+		},
+		{
+			"path": "pages/about/about",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "关于我们"
+			}
+		},
+		{
+			"path": "pages/webview/webview",
+			"style": {
+				"navigationBarTitleText": "青木官网"
 			}
 		}
 	],

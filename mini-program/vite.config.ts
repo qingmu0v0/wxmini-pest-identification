@@ -12,16 +12,11 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         additionalData: `@import "wot-design-uni/components/common/abstracts/variable.scss";`,
-        sassOptions: {
-          outputStyle: "expanded",
-          silenceDeprecations: ["legacy-js-api", "global-builtin", "import", "mixed-decls", "string-div", "unitless-zero"],
-          quietDeps: true,
-          quiet: true,
-          verbose: false,
-          logger: {
-            warn: () => {}, // 空函数，忽略所有警告
-            debug: () => {} // 空函数，忽略调试信息
-          }
+        silenceDeprecations: ["legacy-js-api", "global-builtin", "import", "mixed-decls", "string-div", "unitless-zero"],
+        quietDeps: true,
+        logger: {
+          warn: () => {},
+          debug: () => {}
         }
       }
     }

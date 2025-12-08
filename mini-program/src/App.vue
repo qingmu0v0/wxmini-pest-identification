@@ -10,7 +10,7 @@ onHide(() => {
   console.log("App Hide");
 });
 </script>
-<style>
+<style lang="scss">
 /* 引入全局样式 */
 @import "./styles/global.scss";
 

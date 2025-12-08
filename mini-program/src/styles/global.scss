@@ -3,44 +3,44 @@
  */
 
 /* 色彩变量 - 参考marketing-website的tailwind配置 */
-:root {
-  /* 主色调 - 蓝色系 */
-  --primary-50: #f0f9ff;
-  --primary-100: #e0f2fe;
-  --primary-200: #bae6fd;
-  --primary-300: #7dd3fc;
-  --primary-400: #38bdf8;
-  --primary-500: #0ea5e9;
-  --primary-600: #0284c7;
-  --primary-700: #0369a1;
-  --primary-800: #075985;
-  --primary-900: #0c4a6e;
+page {
+  /* 主色调 - 绿色自然系 (Master Green) */
+  --primary-50: #f0fdf4;  /* Mint Cream */
+  --primary-100: #dcfce7; /* Honeydew */
+  --primary-200: #bbf7d0; /* Pale Green */
+  --primary-300: #86efac; /* Light Green */
+  --primary-400: #4ade80; /* Medium Sea Green */
+  --primary-500: #22c55e; /* Emerald Green */
+  --primary-600: #16a34a; /* Green */
+  --primary-700: #15803d; /* Forest Green */
+  --primary-800: #166534; /* Dark Green */
+  --primary-900: #14532d; /* Deep Forest */
+
+  /* 辅助色 - 泥土/树干色系 (Earth Tones) */
+  --secondary-50: #fdfbf7;
+  --secondary-100: #f8f4eb;
+  --secondary-200: #eee5d5;
+  --secondary-300: #e0ccb1;
+  --secondary-400: #d2b48c; /* Tan */
+  --secondary-500: #8d6e63; /* Brown */
+  --secondary-600: #795548;
+  --secondary-700: #5d4037;
+  --secondary-800: #4e342e;
+  --secondary-900: #3e2723;
   
-  /* 辅助色 - 灰色系 */
-  --secondary-50: #f8fafc;
-  --secondary-100: #f1f5f9;
-  --secondary-200: #e2e8f0;
-  --secondary-300: #cbd5e1;
-  --secondary-400: #94a3b8;
-  --secondary-500: #64748b;
-  --secondary-600: #475569;
-  --secondary-700: #334155;
-  --secondary-800: #1e293b;
-  --secondary-900: #0f172a;
+  /* 强调色 - 虫害警示/活力橙 (Vitality Orange) */
+  --accent-50: #fff7ed;
+  --accent-100: #ffedd5;
+  --accent-200: #fed7aa;
+  --accent-300: #fdba74;
+  --accent-400: #fb923c;
+  --accent-500: #f97316;
+  --accent-600: #ea580c;
+  --accent-700: #c2410c;
+  --accent-800: #9a3412;
+  --accent-900: #7c2d12;
   
-  /* 强调色 - 青色系 */
-  --accent-50: #f0fdfa;
-  --accent-100: #ccfbf1;
-  --accent-200: #99f6e4;
-  --accent-300: #5eead4;
-  --accent-400: #2dd4bf;
-  --accent-500: #14b8a6;
-  --accent-600: #0d9488;
-  --accent-700: #0f766e;
-  --accent-800: #115e59;
-  --accent-900: #134e4a;
-  
-  /* 成功色 */
+  /* 成功色 - 保持一致或微调 */
   --success-50: #f0fdf4;
   --success-100: #dcfce7;
   --success-200: #bbf7d0;
@@ -75,13 +75,70 @@
   --danger-700: #b91c1c;
   --danger-800: #991b1b;
   --danger-900: #7f1d1d;
-}
 
-/* uni-app默认变量覆盖 */
-$uni-color-primary: var(--primary-600);
-$uni-color-success: var(--success-600);
-$uni-color-warning: var(--warning-600);
-$uni-color-error: var(--danger-600);
+  /* 间距变量 - 基于4px网格 */
+  --spacing-0: 0px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-1-5: 6px;
+  --spacing-2: 8px;
+  --spacing-2-5: 10px;
+  --spacing-3: 12px;
+  --spacing-3-5: 14px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-11: 44px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* 圆角变量 */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-base: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* 阴影变量 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* 字体大小 */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  
+  /* 字重 */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  
+  /* 过渡动画 */
+  --transition-base: all 0.3s ease;
+  --transition-fast: all 0.15s ease;
+  --transition-slow: all 0.5s ease;
+}
 
 /* 文字基本颜色 */
 $uni-text-color: var(--secondary-800);
