@@ -725,45 +725,51 @@ const saveResult = () => {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
-  background: white;
-  padding: var(--spacing-3) var(--spacing-8);
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-3) var(--spacing-6);
   padding-bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom));
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: var(--spacing-4);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
   z-index: 100;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(0,0,0,0.05);
   
   .action-btn {
-    flex: 1;
-    height: 44px;
+    height: 48px;
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     transition: all 0.2s;
     
     &.secondary {
-      background: var(--secondary-100);
-      color: var(--secondary-700);
+      background: white;
+      color: var(--secondary-600);
+      border: 1px solid var(--secondary-200);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       
       &:active {
-        background: var(--secondary-200);
+        background: var(--secondary-50);
+        transform: scale(0.98);
       }
     }
     
     &.primary {
-      background: var(--primary-600);
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
       color: white;
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+      border: 1px solid rgba(255,255,255,0.2);
       
       &:active {
-        background: var(--primary-700);
         transform: scale(0.98);
+        box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);
       }
     }
   }
